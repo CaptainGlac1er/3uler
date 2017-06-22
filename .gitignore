@@ -259,3 +259,13 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Bot3ulerLogic/Config/WeatherUndergroundConfig.json
+/Bot3ulerLogic/Config/ImgurConfig.json
+/Bot3ulerLogic/Config/GuildConfig.json
+/Bot3ulerLogic/Config/DiscordConfig.json
+/Bot3ulerLogic/Config/CleverbotConfig.json
+/Bot3ulerLogic/Config/WeatherUndergroundConfig.json
+/Bot3ulerLogic/Config/ImgurConfig.json
+/Bot3ulerLogic/Config/GuildConfig.json
+/Bot3ulerLogic/Config/DiscordConfig.json
+/Bot3ulerLogic/Config/CleverbotConfig.json
