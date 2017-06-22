@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="_3ulerBotServer.Console"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:_3ulerBotServer"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <ScrollViewer Name="scroll">
+        <TextBlock Name="console" TextWrapping="Wrap" Text="{Binding Console, Mode=TwoWay}"/>
+        </ScrollViewer>
+    </Grid>
+</UserControl>
