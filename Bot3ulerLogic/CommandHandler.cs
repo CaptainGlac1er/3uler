@@ -30,6 +30,7 @@ namespace Bot3ulerLogic
             _updater = _provider.GetService<ServerUpdater<string>>();
             _updater.UpdateObservers("commands setup");
         }
+
         public async Task ConfigureAsyc()
         {
             Assembly a = Assembly.GetExecutingAssembly();
@@ -49,6 +50,7 @@ namespace Bot3ulerLogic
             var context = new SocketCommandContext(_client, message);
             _updater.UpdateObservers((await _commands.ExecuteAsync(context, argPos, _provider)).ToString());
         }
+
         /*public async Task<string> GetHelp(ICommandContext context, string command)
         {
             SearchResult result = _commands.Search(context, command);

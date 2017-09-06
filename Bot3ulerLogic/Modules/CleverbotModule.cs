@@ -1,4 +1,5 @@
-﻿using Bot3ulerLogic.Services;
+﻿using Bot3ulerLogic.Preconditions;
+using Bot3ulerLogic.Services;
 using Discord.Commands;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace Bot3ulerLogic.Modules
 {
-    [Group("chat")]
-    public class CleverbotModule : ModuleBase<SocketCommandContext>
+    [Group("chat"), CheckSource("chat")]
+    public class CleverbotModule : GWCModule
     {
-        public CleverbotService Service;
         public CleverbotModule(CleverbotService service)
         {
             Service = service;
@@ -19,7 +19,7 @@ namespace Bot3ulerLogic.Modules
         [Command(""),Summary("Ask cleverbot")]
         public async Task Chat([Remainder, Summary("query")] string query)
         {
-            await ReplyAsync(await Service.Ask(query));
+            await ReplyAsync(await (Service as CleverbotService).Ask(query));
         }
     }
 }

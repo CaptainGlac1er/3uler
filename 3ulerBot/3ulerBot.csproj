@@ -116,6 +116,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BoolToVisibility.cs" />
     <Compile Include="ViewModel\ConsoleViewModel.cs" />
     <Compile Include="ViewModel\DiscordGuildSidebarViewModel.cs" />
     <Page Include="Console.xaml">
@@ -184,8 +185,6 @@
       <Name>Bot3ulerLogic</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

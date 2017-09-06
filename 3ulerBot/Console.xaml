@@ -7,8 +7,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ScrollViewer Name="scroll">
-        <TextBlock Name="console" TextWrapping="Wrap" Text="{Binding Console, Mode=TwoWay}"/>
+        <ScrollViewer x:Name="ConsoleScroll">
+        <TextBox Name="console" TextWrapping="Wrap" Text="{Binding Console, Mode=TwoWay}" TextChanged="console_TextChanged" IsReadOnly="True"/>
         </ScrollViewer>
     </Grid>
 </UserControl>

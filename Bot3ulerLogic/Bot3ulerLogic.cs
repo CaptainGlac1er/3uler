@@ -22,6 +22,7 @@ using GWC.WebConnect;
 using GWC.Imgur;
 using GWC.WeatherUnderground;
 using GWC.Cleverbot;
+using Bot3ulerLogic.Preconditions;
 
 namespace Bot3ulerLogic
 {
@@ -42,6 +43,7 @@ namespace Bot3ulerLogic
             //client.MessageReceived += MessageInbound;
             client.Ready += Client_Ready;
         }
+        
 
         private async Task Client_Ready()
         {
@@ -132,11 +134,13 @@ namespace Bot3ulerLogic
             test.AddSingleton<ImgurService>();
             test.AddSingleton<CleverbotService>();
             test.AddSingleton<ScheduleMaker>();
+            test.AddSingleton<TvModeService>();
 
             var provider = test.BuildServiceProvider();
             provider.GetService<TestService>();
             provider.GetService<ImgurService>();
             provider.GetService<CleverbotService>();
+            provider.GetService<TvModeService>();
             provider.GetService<WeatherUndergroundService>();
              return provider;
         }
@@ -159,6 +163,7 @@ namespace Bot3ulerLogic
             Id = id;
             channels = new List<ChannelObject>();
         }
+        private bool _ShowChannels = false;
         public string name;
         public ulong id;
         public List<ChannelObject> channels;
@@ -195,6 +200,22 @@ namespace Bot3ulerLogic
             }
 
         }
+        [JsonIgnore]
+        public bool ShowChannels
+        {
+            get
+            {
+                return _ShowChannels;
+            }
+            set
+            {
+                if (value != _ShowChannels)
+                {
+                    _ShowChannels = value;
+                }
+                NotifyPropertyChanged();
+            }
+        }
         public List<ChannelObject> Channels
         {
             get
@@ -215,10 +236,7 @@ namespace Bot3ulerLogic
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
     public class ChannelObject : INotifyPropertyChanged
@@ -228,21 +246,22 @@ namespace Bot3ulerLogic
             Name = name;
             Id = id;
         }
-        public string name;
-        public ulong id;
-        public bool vis;
+        private bool _ShowCommands = false;
+        private string name;
+        private ulong id;
+        private bool vis;
 
         public string Name
         {
             get
             {
-                return this.name;
+                return name;
             }
             set
             {
                 if (value != this.name)
                 {
-                    this.name = value;
+                    name = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -263,6 +282,22 @@ namespace Bot3ulerLogic
                 }
             }
 
+        }
+        [JsonIgnore]
+        public bool ShowCommands
+        {
+            get
+            {
+                return _ShowCommands;
+            }
+            set
+            {
+                if (value != _ShowCommands)
+                {
+                    _ShowCommands = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

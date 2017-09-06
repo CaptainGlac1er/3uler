@@ -122,7 +122,9 @@
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Config\Objects\GuildObjects.cs" />
     <Compile Include="Modules\CleverbotModule.cs" />
+    <Compile Include="Modules\GWCModule.cs" />
     <Compile Include="Modules\ImgurModule.cs" />
+    <Compile Include="Modules\TvModeModule.cs" />
     <Compile Include="Modules\WeatherUndergroundModule.cs" />
     <Compile Include="Preconditions\CheckSource.cs" />
     <Compile Include="Services\CleverbotService.cs" />
@@ -135,15 +137,26 @@
     <Compile Include="Services\ImgurService.cs" />
     <Compile Include="Services\Queue\WeatherUndergroundSchedule.cs" />
     <Compile Include="Services\TestService.cs" />
+    <Compile Include="Services\TvModeService.cs" />
     <Compile Include="Services\WeatherUndergroundService.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="Config\CleverbotConfig.json" />
-    <None Include="Config\DiscordConfig.json" />
-    <None Include="Config\GuildConfig.json" />
-    <None Include="Config\ImgurConfig.json" />
-    <None Include="Config\WeatherUndergroundConfig.json" />
+    <None Include="Config\CleverbotConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\DiscordConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\GuildConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\ImgurConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Config\WeatherUndergroundConfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

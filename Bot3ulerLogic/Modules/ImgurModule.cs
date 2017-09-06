@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Bot3ulerLogic.Modules
 {
-    [Group("Imgur"), CheckSource("imgur")]
+    [Group("imgur"), CheckSource("imgur")]
     public class ImgurModule : ModuleBase<SocketCommandContext>
     {
         ImgurService Imgur;

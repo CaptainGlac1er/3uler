@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:_3ulerBotServer"
+             xmlns:vm="clr-namespace:_3ulerBotServer.ViewModel"
+             xmlns:converters="clr-namespace:_3ulerBotServer.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:BoolToVisibility x:Key="BoolToVisibility"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -14,19 +19,21 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <TextBlock Text="{Binding Name}" />
-                        <ListBox ItemsSource="{Binding Channels}">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
-                                        <ToggleButton Content="{Binding Name}"/>
-                                        <StackPanel >
-                                            <Button Content="Add" Click="BtnAddChannel" />
+                        <ToggleButton Content="{Binding Name}" IsChecked="{Binding ShowChannels, Mode=TwoWay}"/>
+                        <StackPanel  Visibility="{Binding ShowChannels, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                            <ListBox ItemsSource="{Binding Channels}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Tag="{Binding}">
+                                            <ToggleButton Content="{Binding Name, Mode=TwoWay}" IsChecked="{Binding ShowCommands, Mode=TwoWay}" />
+                                            <StackPanel Visibility="{Binding ShowCommands, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
+                                                <Button Content="Add" Click="BtnAddChannel" />
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

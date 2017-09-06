@@ -34,5 +34,10 @@ namespace _3ulerBotServer
         {
             return ViewModel;
         }
+
+        private void console_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ConsoleScroll.ScrollToEnd();
+        }
     }
 }

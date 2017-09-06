@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Bot3ulerLogic.Preconditions
 {
