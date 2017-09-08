@@ -11,40 +11,40 @@ using System.Threading.Tasks;
 namespace Bot3ulerLogic.Modules
 {
     [Group("wu"), CheckSource("wu")]
-    public class WeatherUndergroundModule : ModuleBase<SocketCommandContext>
+    public class WeatherUndergroundModule : GWCModule
     {
-        private WeatherUndergroundService WeatherUnderground;
+        //private WeatherUndergroundService WeatherUnderground;
         private CommandService _services;
         public WeatherUndergroundModule(WeatherUndergroundService service, CommandService services)
         {
-            WeatherUnderground = service;
-            WeatherUnderground.UpdateConsole("wu module created");
+            Service = service;
+            (Service as WeatherUndergroundService).UpdateConsole("wu module created");
             _services = services;
         }
         [Command("current"), Summary("Get current weather temp")]
         public async Task CurrentWeatherQuery([Remainder, Summary("query")] string query)
         {
-            await ReplyAsync(await WeatherUnderground.GetCurrentTemp(query));
+            await ReplyAsync(await (Service as WeatherUndergroundService).GetCurrentTemp(query));
         }
         [Command("schedulecurrent"), Summary("current temp schedule")]
         public async Task CurrentWeatherQuery([Summary("delay")] int delay, [Remainder, Summary("query")] string query)
         {
-            await ReplyAsync(await WeatherUnderground.StartCurrentTempSchedule(query, Context.Channel, delay));
+            await ReplyAsync(await (Service as WeatherUndergroundService).StartCurrentTempSchedule(query, Context.Channel, delay));
         }
         [Command("link"), Summary("Get weather link")]
         public async Task LinkWeatherQuery([Remainder, Summary("query")] string query)
         {
-            await ReplyAsync(await WeatherUnderground.GetWeatherUndergroudLink(query));
+            await ReplyAsync(await (Service as WeatherUndergroundService).GetWeatherUndergroudLink(query));
         }
         [Command("stopschedule"), Summary("Stop schedule weather stream")]
         public async Task ScheduleStop([Remainder, Summary("query")] string query)
         {
-            await ReplyAsync(await WeatherUnderground.StopSchedule(query));
+            await ReplyAsync(await (Service as WeatherUndergroundService).StopSchedule(query));
         }
         [Command("getschedules"), Summary("Get all weather schedules")]
         public async Task GetSchedules()
         {
-            await ReplyAsync(await WeatherUnderground.GetAllSchedules());
+            await ReplyAsync(await (Service as WeatherUndergroundService).GetAllSchedules());
         }
         /*[Command("help"), Summary("Get help")]
         public async Task Help()

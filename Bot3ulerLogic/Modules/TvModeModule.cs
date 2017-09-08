@@ -41,5 +41,11 @@ namespace Bot3ulerLogic.Modules
             }
             await ReplyAsync(sb.ToString());
         }
+        [Command("getusers")]
+        public async Task GetUsers()
+        {
+            SocketVoiceChannel voiceChannel = (Context.User as IVoiceState).VoiceChannel as SocketVoiceChannel;
+            await ReplyAsync(await (Service as TvModeService).GetUserList(voiceChannel));
+        }
     }
 }
