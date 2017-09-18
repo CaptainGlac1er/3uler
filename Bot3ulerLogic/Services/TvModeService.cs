@@ -96,7 +96,17 @@ namespace Bot3ulerLogic.Services
             }
             public async Task Remove(SocketUser user)
             {
-                await (user as SocketGuildUser).ModifyAsync(x => x.Mute = SaveMuted[user.Id]);
+                try
+                {
+                    await (user as SocketGuildUser).ModifyAsync(x => x.Mute = SaveMuted[user.Id]);
+                }catch(Exception e)
+                {
+                    foreach(SocketUser su in Admins)
+                    {
+                        IDMChannel dm = await su.CreateDMChannelAsync();
+                        await dm.SendMessageAsync($"{user.Username} couldnt be unmuted");
+                    }
+                }
                 if (_Muted.Contains(user))
                     _Muted.Remove(user);
                 SaveMuted.Remove(user.Id);
@@ -178,8 +188,21 @@ namespace Bot3ulerLogic.Services
                 return false;
             });
         }
+        public async Task<bool> RemoveRoom(SocketVoiceChannel voicechannel, SocketUser user)
+        {
+            TVroom room = await GetRoom(voicechannel);
+            if(room != null && room.Admins.Contains(user))
+            {
+                await RemoveRoom(voicechannel);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
-        public async void StartTvRoom(SocketVoiceChannel voicechannel, List<SocketUser> admins)
+        public async Task StartTvRoom(SocketVoiceChannel voicechannel, List<SocketUser> admins)
         {
             await Task.Run(() =>
             {

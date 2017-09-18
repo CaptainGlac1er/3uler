@@ -13,13 +13,10 @@ namespace Bot3ulerLogic.Modules
     [Group("wu"), CheckSource("wu")]
     public class WeatherUndergroundModule : GWCModule
     {
-        //private WeatherUndergroundService WeatherUnderground;
-        private CommandService _services;
-        public WeatherUndergroundModule(WeatherUndergroundService service, CommandService services)
+        public WeatherUndergroundModule(WeatherUndergroundService service)
         {
             Service = service;
             (Service as WeatherUndergroundService).UpdateConsole("wu module created");
-            _services = services;
         }
         [Command("current"), Summary("Get current weather temp")]
         public async Task CurrentWeatherQuery([Remainder, Summary("query")] string query)

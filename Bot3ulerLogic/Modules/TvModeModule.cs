@@ -20,11 +20,10 @@ namespace Bot3ulerLogic.Modules
         [Command("start")]
         public async Task StartTvRoom()
         {
-            
-            SocketVoiceChannel voiceChannel = (Context.User as IVoiceState).VoiceChannel as SocketVoiceChannel;
+            SocketVoiceChannel voiceChannel = GetVoiceChannel();
             if (voiceChannel != null)
             {
-                (Service as TvModeService).StartTvRoom(voiceChannel, new List<SocketUser>() { Context.User });
+                await (Service as TvModeService).StartTvRoom(voiceChannel, new List<SocketUser>() { Context.User });
             }
             else
             {
@@ -44,8 +43,35 @@ namespace Bot3ulerLogic.Modules
         [Command("getusers")]
         public async Task GetUsers()
         {
-            SocketVoiceChannel voiceChannel = (Context.User as IVoiceState).VoiceChannel as SocketVoiceChannel;
-            await ReplyAsync(await (Service as TvModeService).GetUserList(voiceChannel));
+            SocketVoiceChannel voiceChannel = GetVoiceChannel();
+            if (voiceChannel != null)
+            {
+                await ReplyAsync(await (Service as TvModeService).GetUserList(voiceChannel));
+            }
+            else
+            {
+                await ReplyAsync($"{Context.User.Mention} you are not in a voice channel");
+            }
+        }
+        [Command("stop")]
+        public async Task StopRoom()
+        {
+            SocketVoiceChannel voiceChannel = GetVoiceChannel();
+            if (voiceChannel != null)
+            {
+                if(await (Service as TvModeService).RemoveRoom(voiceChannel, Context.User))
+                {
+                    await Context.Channel.SendMessageAsync($"stopped successfully");
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync($"stop failed");
+                }
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync($"{Context.User.Mention} You're not in a voice channel");
+            }
         }
     }
 }

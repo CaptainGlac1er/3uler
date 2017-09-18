@@ -22,7 +22,6 @@ using GWC.WebConnect;
 using GWC.Imgur;
 using GWC.WeatherUnderground;
 using GWC.Cleverbot;
-using Bot3ulerLogic.Preconditions;
 
 namespace Bot3ulerLogic
 {
@@ -43,21 +42,21 @@ namespace Bot3ulerLogic
             //client.MessageReceived += MessageInbound;
             client.Ready += Client_Ready;
         }
-        
+
 
         private async Task Client_Ready()
         {
             await client.SetGameAsync("scrubs like you");
             console.UpdateObservers("Bot connected");
             console.UpdateObservers("can connect to");
-            if(GuildUpdate != null)
+            if (GuildUpdate != null)
             {
-                foreach(SocketGuild guild in client.Guilds)
+                foreach (SocketGuild guild in client.Guilds)
                 {
                     List<GuildObject> current = GuildUpdate.GetCurrentData();
                     current = current ?? new List<GuildObject>();
                     GuildObject guildObject = new GuildObject(guild.Name, guild.Id);
-                    foreach(SocketTextChannel channel in guild.TextChannels)
+                    foreach (SocketTextChannel channel in guild.TextChannels)
                     {
                         guildObject.Channels.Add(new ChannelObject(channel.Name, channel.Id));
                     }
@@ -65,8 +64,8 @@ namespace Bot3ulerLogic
                     GuildUpdate.UpdateObservers(current);
                 }
             }
-               // console.UpdateObservers($"{guild.Name} channel count {guild.Channels.Count} id {guild.Id}");
-            
+            // console.UpdateObservers($"{guild.Name} channel count {guild.Channels.Count} id {guild.Id}");
+
         }
 
         public async Task StartBot()
@@ -85,21 +84,22 @@ namespace Bot3ulerLogic
             await Task.Delay(-1);
         }
 
-        private Task Log(LogMessage msg)
+        private async Task Log(LogMessage msg)
         {
-            Debug.WriteLine(msg.ToString());
-            console.UpdateObservers(string.Format("{0} {1} {2} {3}", msg.Source, msg.Exception, msg.Severity, msg.Message));
-            console.UpdateObservers(Thread.CurrentThread.Name);
-            return Task.CompletedTask;
+            await Task.Run(() =>
+            {
+                Debug.WriteLine(msg.ToString());
+                console.UpdateObservers(string.Format("{4} {0} {1} {2} {3}", msg.Source, msg.Exception, msg.Severity, msg.Message, Thread.CurrentThread.Name));
+            });
         }
-        
+
         public async Task<string> GetStatus()
         {
             StringBuilder output = new StringBuilder();
             IReadOnlyCollection<RestConnection> connections = await client.GetConnectionsAsync();
             foreach (RestConnection r in connections)
                 output.Append(string.Format("{0} {1} {2}\n", r.Id, r.Name, r.Type));
-            return output.ToString() + client.ConnectionState.ToString(); 
+            return output.ToString() + client.ConnectionState.ToString();
         }
         public async Task<GuildConfig> GetSavedDiscordConfig()
         {
@@ -120,29 +120,29 @@ namespace Bot3ulerLogic
             await CleverbotConnect.LoadConfig(new FileData("Config/CleverbotConfig.json"));
 
 
-            var test = new ServiceCollection();
-            test.AddSingleton(client);
-            test.AddSingleton(console);
-            test.AddSingleton(ImgurConnect);
-            test.AddSingleton(WeatherUndergroundConnect);
-            test.AddSingleton(CleverbotConnect);
-            test.AddSingleton(GuildConfigInfo);
-            test.AddSingleton<CommandHandler>();
-            test.AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, ThrowOnError = true }));
-            test.AddSingleton(new TestService("testing: ", console));
-            test.AddSingleton<WeatherUndergroundService>();
-            test.AddSingleton<ImgurService>();
-            test.AddSingleton<CleverbotService>();
-            test.AddSingleton<ScheduleMaker>();
-            test.AddSingleton<TvModeService>();
+            var sc = new ServiceCollection();
+            sc.AddSingleton(client);
+            sc.AddSingleton(console);
+            sc.AddSingleton(ImgurConnect);
+            sc.AddSingleton(WeatherUndergroundConnect);
+            sc.AddSingleton(CleverbotConnect);
+            sc.AddSingleton(GuildConfigInfo);
+            sc.AddSingleton<CommandHandler>();
+            sc.AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, ThrowOnError = true }));
+            sc.AddSingleton(new TestService("testing: ", console));
+            sc.AddSingleton<WeatherUndergroundService>();
+            sc.AddSingleton<ImgurService>();
+            sc.AddSingleton<CleverbotService>();
+            sc.AddSingleton<ScheduleMaker>();
+            sc.AddSingleton<TvModeService>();
 
-            var provider = test.BuildServiceProvider();
-            provider.GetService<TestService>();
-            provider.GetService<ImgurService>();
-            provider.GetService<CleverbotService>();
-            provider.GetService<TvModeService>();
-            provider.GetService<WeatherUndergroundService>();
-             return provider;
+            var sp = sc.BuildServiceProvider();
+            sp.GetService<TestService>();
+            sp.GetService<ImgurService>();
+            sp.GetService<CleverbotService>();
+            sp.GetService<TvModeService>();
+            sp.GetService<WeatherUndergroundService>();
+            return sp;
         }
         public void ListenForGuildChange(IServerObserver<List<GuildObject>> guildUpdate)
         {
@@ -247,21 +247,20 @@ namespace Bot3ulerLogic
             Id = id;
         }
         private bool _ShowCommands = false;
-        private string name;
-        private ulong id;
-        private bool vis;
+        private string _Name;
+        private ulong _Id;
 
         public string Name
         {
             get
             {
-                return name;
+                return _Name;
             }
             set
             {
-                if (value != this.name)
+                if (value != _Name)
                 {
-                    name = value;
+                    _Name = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -271,13 +270,13 @@ namespace Bot3ulerLogic
         {
             get
             {
-                return this.id;
+                return _Id;
             }
             set
             {
-                if (value != this.id)
+                if (value != _Id)
                 {
-                    this.id = value;
+                    this._Id = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -303,10 +302,7 @@ namespace Bot3ulerLogic
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
