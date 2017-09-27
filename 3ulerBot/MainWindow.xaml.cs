@@ -34,8 +34,14 @@ namespace _3ulerBotServer
             consoleUpdater.AddObserver(consoleField.GetViewModel());
             bot = new Bot3uler(consoleUpdater);
             bot.ListenForGuildChange(GuildServers.model);
-            bot.StartBot();//.GetAwaiter().OnCompleted(new Action(() => consoleUpdater.UpdateObservers("done")));
+            this.Loaded += MainWindow_Loaded;//.GetAwaiter().OnCompleted(new Action(() => consoleUpdater.UpdateObservers("done")));
         }
+
+        private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            await bot.StartBot();
+        }
+
         private LinkedListNode<string> head;
         private async void ConsoleKeyPress(object sender, KeyEventArgs e)
         {
