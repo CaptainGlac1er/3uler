@@ -146,7 +146,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Config\DiscordConfig.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Config\GuildConfig.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

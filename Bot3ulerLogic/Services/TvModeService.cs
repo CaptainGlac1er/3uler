@@ -14,13 +14,10 @@ namespace Bot3ulerLogic.Services
         private class TVroom
         {
             private DateTime started;
-            public TVroom(SocketVoiceChannel TvChannel, List<SocketUser> Admins, ServerUpdater<string> console)
+            public TVroom(SocketVoiceChannel TvChannel, ServerUpdater<string> console)
             {
                 Console = console;
                 _TvChannel = TvChannel;
-                this._Admins = Admins;
-                foreach (SocketUser user in Admins)
-                    AddAdmins(user);
                 started = DateTime.Now;
             }
             public  SocketVoiceChannel TvChannel
@@ -59,19 +56,19 @@ namespace Bot3ulerLogic.Services
 
             private Dictionary<ulong, bool> SaveMuted = new Dictionary<ulong, bool>();
 
-            private async void AddAdmins(SocketUser user)
+            public async Task AddAdmins(SocketUser user)
             {
                 SaveMuted.Add(user.Id, (user as SocketGuildUser).IsMuted);
                 await (user as SocketGuildUser).ModifyAsync(x => x.Mute = false);
                 _Admins.Add(user);
             }
-            private async Task AddGuest(SocketUser user)
+            public async Task AddGuest(SocketUser user)
             {
                 SaveMuted.Add(user.Id, (user as SocketGuildUser).IsMuted);
                 await (user as SocketGuildUser).ModifyAsync(x => x.Mute = true);
                 _Muted.Add(user);
             }
-            private async Task AddAllowed(SocketUser user)
+            public async Task AddAllowed(SocketUser user)
             {
                 SaveMuted.Add(user.Id, (user as SocketGuildUser).IsMuted);
                 await (user as SocketGuildUser).ModifyAsync(x => x.Mute = false);
@@ -101,11 +98,13 @@ namespace Bot3ulerLogic.Services
                     await (user as SocketGuildUser).ModifyAsync(x => x.Mute = SaveMuted[user.Id]);
                 }catch(Exception e)
                 {
+                    Console.UpdateObservers(e.Message);
                     foreach(SocketUser su in Admins)
                     {
-                        IDMChannel dm = await su.CreateDMChannelAsync();
+                        IDMChannel dm = await su.GetOrCreateDMChannelAsync();
                         await dm.SendMessageAsync($"{user.Username} couldnt be unmuted");
                     }
+
                 }
                 if (_Muted.Contains(user))
                     _Muted.Remove(user);
@@ -118,6 +117,12 @@ namespace Bot3ulerLogic.Services
                     await Remove(user);
                     await AddAllowed(user);
                     Console.UpdateObservers($"{user.Username} is now allowed");
+                }
+                if (Allowed.Contains(user) && (user as SocketGuildUser).IsMuted)
+                {
+                    await Remove(user);
+                    await AddGuest(user);
+                    Console.UpdateObservers($"{user.Username} is now muted");
                 }
             }
             public async Task<int> GetRoomCount()
@@ -204,12 +209,21 @@ namespace Bot3ulerLogic.Services
 
         public async Task StartTvRoom(SocketVoiceChannel voicechannel, List<SocketUser> admins)
         {
-            await Task.Run(() =>
+            TVroom room = new TVroom(voicechannel, Console);
+            foreach(SocketUser user in admins)
             {
-                TVroom room = new TVroom(voicechannel, admins, Console);
-                RunningTVRooms.Add($"{voicechannel.Id}", room);
-                Console.UpdateObservers(RunningTVRooms.Values.Count.ToString() + " rooms running");
-            });
+                await room.AddAdmins(user);
+            }
+                
+            foreach (SocketUser user in voicechannel.Users)
+            {
+                if (!admins.Contains(user))
+                {
+                    await room.AddAllowed(user);
+                }
+            }
+            RunningTVRooms.Add($"{voicechannel.Id}", room);
+            Console.UpdateObservers(RunningTVRooms.Values.Count.ToString() + " rooms running");
         }
         public async Task<List<string>> GetListOfRooms()
         {

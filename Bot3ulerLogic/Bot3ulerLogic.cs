@@ -22,6 +22,7 @@ using GWC.WebConnect;
 using GWC.Imgur;
 using GWC.WeatherUnderground;
 using GWC.Cleverbot;
+using System.Collections.Specialized;
 
 namespace Bot3ulerLogic
 {
@@ -31,9 +32,11 @@ namespace Bot3ulerLogic
         ServerUpdater<string> console;
         ServerUpdater<List<GuildObject>> GuildUpdate;
         GuildConfig GuildConfigInfo;
+        WebConnection WebConnect;
         public Bot3uler(ServerUpdater<string> console)
         {
             this.console = console;
+            WebConnect = new WebConnection();
             client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose
@@ -53,15 +56,21 @@ namespace Bot3ulerLogic
             {
                 foreach (SocketGuild guild in client.Guilds)
                 {
-                    List<GuildObject> current = GuildUpdate.GetCurrentData();
-                    current = current ?? new List<GuildObject>();
-                    GuildObject guildObject = new GuildObject(guild.Name, guild.Id);
-                    foreach (SocketTextChannel channel in guild.TextChannels)
+                    try
                     {
-                        guildObject.Channels.Add(new ChannelObject(channel.Name, channel.Id));
+                        List<GuildObject> current = GuildUpdate.GetCurrentData();
+                        current = current ?? new List<GuildObject>();
+                        GuildObject guildObject = new GuildObject(guild.Name, guild.Id);
+                        foreach (SocketTextChannel channel in guild.TextChannels)
+                        {
+                            guildObject.Channels.Add(new ChannelObject(channel.Name, channel.Id));
+                        }
+                        current.Add(guildObject);
+                        GuildUpdate.UpdateObservers(current);
+                    }catch(Exception e)
+                    {
+                        Debug.WriteLine(e);
                     }
-                    current.Add(guildObject);
-                    GuildUpdate.UpdateObservers(current);
                 }
             }
             // console.UpdateObservers($"{guild.Name} channel count {guild.Channels.Count} id {guild.Id}");
@@ -70,18 +79,15 @@ namespace Bot3ulerLogic
 
         public async Task StartBot()
         {
-            string token = (await (new FileData("Config/DiscordConfig.json")).GetObjectFromJson<DiscordInfo>()).Token;
-
+            DiscordInfo discordInfo = await (new FileData("Config/DiscordConfig.json")).GetObjectFromJson<DiscordInfo>();
             GuildConfigInfo = await GetSavedDiscordConfig();
             var services = await ConfigureServices();
 
             await services.GetRequiredService<CommandHandler>().ConfigureAsyc();
 
-            await client.LoginAsync(TokenType.Bot, token);
+            await client.LoginAsync(TokenType.Bot, discordInfo.Token);
             await client.StartAsync();
             console.UpdateObservers(Thread.CurrentThread.Name);
-
-            await Task.Delay(-1);
         }
 
         private async Task Log(LogMessage msg)
@@ -108,7 +114,6 @@ namespace Bot3ulerLogic
         }
         public async Task<IServiceProvider> ConfigureServices()
         {
-            WebConnection WebConnect = new WebConnection();
             Imgur ImgurConnect = new Imgur(WebConnect);
             await ImgurConnect.LoadConfig(new FileData("Config/ImgurConfig.json"));
             await ImgurConnect.SetupConnection();
@@ -146,14 +151,21 @@ namespace Bot3ulerLogic
         }
         public void ListenForGuildChange(IServerObserver<List<GuildObject>> guildUpdate)
         {
-            this.GuildUpdate = new ServerUpdater<List<GuildObject>>();
+            GuildUpdate = new ServerUpdater<List<GuildObject>>();
             GuildUpdate.AddObserver(guildUpdate);
         }
     }
     class DiscordInfo
     {
-        [JsonProperty("token")]
+        [JsonProperty("token"),JsonRequired()]
         public string Token { get; set; }
+           //todo
+        [JsonProperty("client_id")]
+        public string ClientID { get; set; }
+            //todo
+        [JsonProperty("secret")]
+        public string Secret { get; set; }
+
     }
     public class GuildObject : INotifyPropertyChanged
     {
