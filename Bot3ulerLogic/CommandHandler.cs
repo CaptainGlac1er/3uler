@@ -28,19 +28,18 @@ namespace Bot3ulerLogic
             _client.MessageReceived += ProcessCommandAsync;
             _commands = _provider.GetService<CommandService>();
             _updater = _provider.GetService<ServerUpdater<string>>();
-            _updater.UpdateObservers("commands setup");
         }
 
         public async Task ConfigureAsyc()
         {
             Assembly a = Assembly.GetExecutingAssembly();
             await _commands.AddModulesAsync(a);
-            _updater.UpdateObservers("ConfigureAsyc run");
+            await _updater.UpdateObservers("ConfigureAsyc run");
         }
         private async Task ProcessCommandAsync(SocketMessage pMsg)
         {
             var message = pMsg as SocketUserMessage;
-            _updater.UpdateObservers(message.Content);
+            await _updater.UpdateObservers(message.Content);
 
             if (message == null) return;
             if (message.Content.Length > 0 && !message.Content.StartsWith("!")) return;
@@ -48,7 +47,7 @@ namespace Bot3ulerLogic
             int argPos = 1;
             
             var context = new SocketCommandContext(_client, message);
-            _updater.UpdateObservers((await _commands.ExecuteAsync(context, argPos, _provider)).ToString());
+            await _updater.UpdateObservers((await _commands.ExecuteAsync(context, argPos, _provider)).ToString());
         }
 
         /*public async Task<string> GetHelp(ICommandContext context, string command)

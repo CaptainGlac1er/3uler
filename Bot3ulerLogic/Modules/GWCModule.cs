@@ -12,7 +12,7 @@ namespace Bot3ulerLogic.Modules
 {
     public class GWCModule : ModuleBase<SocketCommandContext>
     {
-        protected APIconnection Service;
+        protected GWCService Service;
         protected SocketVoiceChannel GetVoiceChannel()
         {
             return (Context.User as IVoiceState).VoiceChannel as SocketVoiceChannel;

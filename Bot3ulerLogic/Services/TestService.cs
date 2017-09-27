@@ -14,14 +14,13 @@ namespace Bot3ulerLogic.Services
         {
             this.prefix = prefix;
             this.console = console;
-            console.UpdateObservers("service created");
         }
         public string GetPrefix()
         {
             return prefix;
         }
-        public void UpdateConsole(string message){
-            console.UpdateObservers(message);
+        public async Task UpdateConsole(string message){
+            await console.UpdateObservers(message);
         }
     }
 }

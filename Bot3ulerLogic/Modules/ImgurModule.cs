@@ -17,7 +17,6 @@ namespace Bot3ulerLogic.Modules
         public ImgurModule(ImgurService service)
         {
             Service = service;
-            Service.UpdateConsole("imgur module created");
         }
         [Command("get"), Summary("Get image from imgur")]
         public async Task Echo([Remainder, Summary("query")] string query)

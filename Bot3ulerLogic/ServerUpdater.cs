@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bot3ulerLogic
 {
@@ -16,11 +17,11 @@ namespace Bot3ulerLogic
         {
             observers.Add(observer);
         }
-        public void UpdateObservers(T data)
+        public async Task UpdateObservers(T data)
         {
             currentData = data;
             foreach (IServerObserver<T> toUpdate in observers)
-                toUpdate.BotUpdate(data);
+                await toUpdate.BotUpdate(data);
         }
         public T GetCurrentData()
         {
@@ -29,6 +30,6 @@ namespace Bot3ulerLogic
     }
     public interface IServerObserver<T>
     {
-        void BotUpdate(T update);
+        Task BotUpdate(T update);
     }
 }

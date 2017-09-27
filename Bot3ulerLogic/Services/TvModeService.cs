@@ -9,7 +9,7 @@ using Discord;
 
 namespace Bot3ulerLogic.Services
 {
-    public class TvModeService : APIconnection
+    public class TvModeService : GWCService
     {
         private class TVroom
         {
@@ -81,13 +81,13 @@ namespace Bot3ulerLogic.Services
                 
                 if(started.Subtract(DateTime.Now).TotalMinutes < 1)
                 {
-                    Console.UpdateObservers($"{user.Username} was added to tvroom as Allowed during allowed time");
+                    await Console.UpdateObservers($"{user.Username} was added to tvroom as Allowed during allowed time");
                     await AddAllowed(user);
 
                 }
                 if(!_Allowed.Contains(user) && !_Admins.Contains(user))
                 {
-                    Console.UpdateObservers($"{user.Username} was added to tvroom as Guest");
+                    await Console.UpdateObservers($"{user.Username} was added to tvroom as Guest");
                     await AddGuest(user);
                 }
             }
@@ -98,7 +98,7 @@ namespace Bot3ulerLogic.Services
                     await (user as SocketGuildUser).ModifyAsync(x => x.Mute = SaveMuted[user.Id]);
                 }catch(Exception e)
                 {
-                    Console.UpdateObservers(e.Message);
+                    await Console.UpdateObservers(e.Message);
                     foreach(SocketUser su in Admins)
                     {
                         IDMChannel dm = await su.GetOrCreateDMChannelAsync();
@@ -116,13 +116,13 @@ namespace Bot3ulerLogic.Services
                 {
                     await Remove(user);
                     await AddAllowed(user);
-                    Console.UpdateObservers($"{user.Username} is now allowed");
+                    await Console.UpdateObservers($"{user.Username} is now allowed");
                 }
                 if (Allowed.Contains(user) && (user as SocketGuildUser).IsMuted)
                 {
                     await Remove(user);
                     await AddGuest(user);
-                    Console.UpdateObservers($"{user.Username} is now muted");
+                    await Console.UpdateObservers($"{user.Username} is now muted");
                 }
             }
             public async Task<int> GetRoomCount()
@@ -142,7 +142,7 @@ namespace Bot3ulerLogic.Services
         
         private async Task ProcessVoiceChannelChange(SocketUser user, SocketVoiceState oldChannel, SocketVoiceState newChannel)
         {
-            Console.UpdateObservers($"{user == null} {oldChannel} {newChannel}");
+            await UpdateConsole($"{user == null} {oldChannel} {newChannel}");
             if (oldChannel.VoiceChannel.Id != newChannel.VoiceChannel.Id)
             {
                 TVroom roomToUse = await GetRoom(newChannel.VoiceChannel);
@@ -171,15 +171,12 @@ namespace Bot3ulerLogic.Services
 
         private async Task<TVroom> GetRoom(SocketVoiceChannel voicechannel)
         {
-            return await Task.Run<TVroom>(() =>
+            if (voicechannel != null && RunningTVRooms.ContainsKey($"{voicechannel.Id}"))
             {
-                if (voicechannel != null && RunningTVRooms.ContainsKey($"{voicechannel.Id}"))
-                {
-                    Console.UpdateObservers($"getting {voicechannel.Name}");
-                    return RunningTVRooms[$"{voicechannel.Id}"];
-                }
-                return null;
-            });
+                await UpdateConsole($"getting {voicechannel.Name}");
+                return RunningTVRooms[$"{voicechannel.Id}"];
+            }
+            return null;
         }
         private async Task<bool> RemoveRoom(SocketVoiceChannel voicechannel)
         {
@@ -223,7 +220,7 @@ namespace Bot3ulerLogic.Services
                 }
             }
             RunningTVRooms.Add($"{voicechannel.Id}", room);
-            Console.UpdateObservers(RunningTVRooms.Values.Count.ToString() + " rooms running");
+            await Console.UpdateObservers(RunningTVRooms.Values.Count.ToString() + " rooms running");
         }
         public async Task<List<string>> GetListOfRooms()
         {

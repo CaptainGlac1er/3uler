@@ -16,7 +16,6 @@ namespace Bot3ulerLogic.Modules
         public WeatherUndergroundModule(WeatherUndergroundService service)
         {
             Service = service;
-            (Service as WeatherUndergroundService).UpdateConsole("wu module created");
         }
         [Command("current"), Summary("Get current weather temp")]
         public async Task CurrentWeatherQuery([Remainder, Summary("query")] string query)

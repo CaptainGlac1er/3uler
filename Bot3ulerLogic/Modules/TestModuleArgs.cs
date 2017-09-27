@@ -14,7 +14,6 @@ namespace Bot3ulerLogic.Modules
         public TestModuleArgs(TestService stuff)
         {
             this.premessage = stuff.GetPrefix();
-            stuff.UpdateConsole("module created");
         }
         [Command("echo"), Summary("echos a message")]
         public async Task Echo([Remainder, Summary("text to echo")] string echo)

@@ -8,20 +8,26 @@ using System.Threading.Tasks;
 
 namespace Bot3ulerLogic.Services
 {
-    public abstract class APIconnection
+    public abstract class GWCService
     {
         protected ServerUpdater<string> Console;
         protected DiscordSocketClient Client;
-        public APIconnection(ServerUpdater<string> console, DiscordSocketClient client)
+        public string CommandName { get; set; }
+        public GWCService(ServerUpdater<string> console, DiscordSocketClient client)
         {
             Console = console;
             Client = client;
         }
-        public void UpdateConsole(string message)
+        public async Task UpdateConsole(string message)
         {
-            Console.UpdateObservers(message);
+            await Console.UpdateObservers(message);
         }
-        public string CommandName { get; set; }
+    }
+    public abstract class APIconnection : GWCService
+    {
+        public APIconnection(ServerUpdater<string> console, DiscordSocketClient client): base(console,client)
+        {
+        }
     }
     public abstract class APIConnectionScheduled : APIconnection
     {

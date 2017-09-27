@@ -33,9 +33,12 @@ namespace _3ulerBotServer.ViewModel
             }
         }
 
-        public void BotUpdate(string update)
+        public async Task BotUpdate(string update)
         {
-            WriteLine(update);
+            await Task.Run(() =>
+            {
+                WriteLine(update);
+            });
         }
         private void RaisePropertyChanged([CallerMemberName] String propertyName = "")
         {

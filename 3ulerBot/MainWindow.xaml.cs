@@ -34,7 +34,7 @@ namespace _3ulerBotServer
             consoleUpdater.AddObserver(consoleField.GetViewModel());
             bot = new Bot3uler(consoleUpdater);
             bot.ListenForGuildChange(GuildServers.model);
-            bot.StartBot().GetAwaiter().OnCompleted(new Action(() => consoleUpdater.UpdateObservers("done")));
+            bot.StartBot();//.GetAwaiter().OnCompleted(new Action(() => consoleUpdater.UpdateObservers("done")));
         }
         private LinkedListNode<string> head;
         private async void ConsoleKeyPress(object sender, KeyEventArgs e)
@@ -45,7 +45,7 @@ namespace _3ulerBotServer
                 case Key.Enter:
                     if (input != "")
                     {
-                        consoleUpdater.UpdateObservers(string.Format("Console submitted {0}", input));
+                        await consoleUpdater.UpdateObservers(string.Format("Console submitted {0}", input));
                         previousCommands.AddAfter(previousCommands.First, input);
                         head = previousCommands.First;
                         consoleInput.Text = "";
@@ -54,9 +54,9 @@ namespace _3ulerBotServer
                 case Key.Home:
                     try
                     {
-                        consoleUpdater.UpdateObservers("home pressed");
+                        await consoleUpdater.UpdateObservers("home pressed");
                         string update = await bot.GetStatus();
-                        consoleUpdater.UpdateObservers(update);
+                        await consoleUpdater.UpdateObservers(update);
                     }
                     catch (Exception er)
                     {
@@ -80,11 +80,11 @@ namespace _3ulerBotServer
 
         }
 
-        private void BtnSubmitCommand(object sender, RoutedEventArgs e)
+        private async void BtnSubmitCommand(object sender, RoutedEventArgs e)
         {
             if (consoleInput.Text != "")
             {
-                consoleUpdater.UpdateObservers(consoleInput.Text);
+                await consoleUpdater.UpdateObservers(consoleInput.Text);
                 consoleInput.Text = "";
             }
         }

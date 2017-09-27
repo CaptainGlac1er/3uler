@@ -50,8 +50,8 @@ namespace Bot3ulerLogic
         private async Task Client_Ready()
         {
             await client.SetGameAsync("scrubs like you");
-            console.UpdateObservers("Bot connected");
-            console.UpdateObservers("can connect to");
+            await console.UpdateObservers("Bot connected");
+            await console.UpdateObservers("can connect to");
             if (GuildUpdate != null)
             {
                 foreach (SocketGuild guild in client.Guilds)
@@ -66,7 +66,7 @@ namespace Bot3ulerLogic
                             guildObject.Channels.Add(new ChannelObject(channel.Name, channel.Id));
                         }
                         current.Add(guildObject);
-                        GuildUpdate.UpdateObservers(current);
+                        await GuildUpdate.UpdateObservers(current);
                     }catch(Exception e)
                     {
                         Debug.WriteLine(e);
@@ -87,16 +87,13 @@ namespace Bot3ulerLogic
 
             await client.LoginAsync(TokenType.Bot, discordInfo.Token);
             await client.StartAsync();
-            console.UpdateObservers(Thread.CurrentThread.Name);
+            await console.UpdateObservers(Thread.CurrentThread.Name);
         }
 
         private async Task Log(LogMessage msg)
         {
-            await Task.Run(() =>
-            {
-                Debug.WriteLine(msg.ToString());
-                console.UpdateObservers(string.Format("{4} {0} {1} {2} {3}", msg.Source, msg.Exception, msg.Severity, msg.Message, Thread.CurrentThread.Name));
-            });
+            Debug.WriteLine(msg.ToString());
+            await console.UpdateObservers(string.Format("{4} {0} {1} {2} {3}", msg.Source, msg.Exception, msg.Severity, msg.Message, Thread.CurrentThread.Name));
         }
 
         public async Task<string> GetStatus()

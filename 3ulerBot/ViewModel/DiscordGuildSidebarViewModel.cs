@@ -43,11 +43,13 @@ namespace _3ulerBotServer.ViewModel
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public void BotUpdate(List<GuildObject> update)
+        public async Task BotUpdate(List<GuildObject> update)
         {
-            Debug.WriteLine("update sent");
-            Guilds = update;
-
+            await Task.Run(() =>
+            {
+                Debug.WriteLine("update sent");
+                Guilds = update;
+            });
         }
     }
 }
