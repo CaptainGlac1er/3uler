@@ -62,13 +62,13 @@ namespace Bot3ulerLogic.Services
                 await (user as SocketGuildUser).ModifyAsync(x => x.Mute = false);
                 _Admins.Add(user);
             }
-            public async Task AddGuest(SocketUser user)
+            private async Task AddGuest(SocketUser user)
             {
                 SaveMuted.Add(user.Id, (user as SocketGuildUser).IsMuted);
                 await (user as SocketGuildUser).ModifyAsync(x => x.Mute = true);
                 _Muted.Add(user);
             }
-            public async Task AddAllowed(SocketUser user)
+            private async Task AddAllowed(SocketUser user)
             {
                 SaveMuted.Add(user.Id, (user as SocketGuildUser).IsMuted);
                 await (user as SocketGuildUser).ModifyAsync(x => x.Mute = false);
@@ -76,10 +76,10 @@ namespace Bot3ulerLogic.Services
             }
 
 
-            public async Task Add(SocketUser user)
+            public async Task Add(SocketUser user, bool bypass = false)
             {
                 
-                if(started.Subtract(DateTime.Now).TotalMinutes < 1)
+                if(started.Subtract(DateTime.Now).TotalMinutes < 1 || bypass)
                 {
                     await Console.UpdateObservers($"{user.Username} was added to tvroom as Allowed during allowed time");
                     await AddAllowed(user);
@@ -216,7 +216,7 @@ namespace Bot3ulerLogic.Services
             {
                 if (!admins.Contains(user))
                 {
-                    await room.AddAllowed(user);
+                    await room.Add(user, true);
                 }
             }
             RunningTVRooms.Add($"{voicechannel.Id}", room);

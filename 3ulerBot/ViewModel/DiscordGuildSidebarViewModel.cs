@@ -37,7 +37,6 @@ namespace _3ulerBotServer.ViewModel
         {
             if (PropertyChanged != null)
             {
-                Debug.WriteLine(">" + propertyName);
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
@@ -47,7 +46,6 @@ namespace _3ulerBotServer.ViewModel
         {
             await Task.Run(() =>
             {
-                Debug.WriteLine("update sent");
                 Guilds = update;
             });
         }

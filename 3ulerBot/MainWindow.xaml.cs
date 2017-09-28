@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Bot3ulerLogic;
 using System.Diagnostics;
+using _3ulerBotServer.ViewModel;
 
 namespace _3ulerBotServer
 {
@@ -23,23 +24,23 @@ namespace _3ulerBotServer
     public partial class MainWindow : Window
     {
         LinkedList<string> previousCommands;
-        ServerUpdater<string> consoleUpdater;
-        Bot3uler bot;
+        MainWindowViewModel ViewModel;
+        
         public MainWindow()
         {
             InitializeComponent();
+            ViewModel = new MainWindowViewModel();
             previousCommands = new LinkedList<string>();
             previousCommands.AddFirst("");
-            consoleUpdater = new ServerUpdater<string>();
-            consoleUpdater.AddObserver(consoleField.GetViewModel());
-            bot = new Bot3uler(consoleUpdater);
-            bot.ListenForGuildChange(GuildServers.model);
+            ViewModel.AddConsole(consoleField.GetViewModel());
+            ViewModel.AddBot();
+            ViewModel.AddGuildList(GuildServers.model);
             this.Loaded += MainWindow_Loaded;//.GetAwaiter().OnCompleted(new Action(() => consoleUpdater.UpdateObservers("done")));
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            await bot.StartBot();
+            await ViewModel.GetBot().StartBot();
         }
 
         private LinkedListNode<string> head;
@@ -51,7 +52,7 @@ namespace _3ulerBotServer
                 case Key.Enter:
                     if (input != "")
                     {
-                        await consoleUpdater.UpdateObservers(string.Format("Console submitted {0}", input));
+                        await ViewModel.ConsoleUpdater.UpdateObservers(string.Format("Console submitted {0}", input));
                         previousCommands.AddAfter(previousCommands.First, input);
                         head = previousCommands.First;
                         consoleInput.Text = "";
@@ -60,9 +61,9 @@ namespace _3ulerBotServer
                 case Key.Home:
                     try
                     {
-                        await consoleUpdater.UpdateObservers("home pressed");
-                        string update = await bot.GetStatus();
-                        await consoleUpdater.UpdateObservers(update);
+                        await ViewModel.ConsoleUpdater.UpdateObservers("home pressed");
+                        string update = await ViewModel.GetBot().GetStatus();
+                        await ViewModel.ConsoleUpdater.UpdateObservers(update);
                     }
                     catch (Exception er)
                     {
@@ -90,7 +91,7 @@ namespace _3ulerBotServer
         {
             if (consoleInput.Text != "")
             {
-                await consoleUpdater.UpdateObservers(consoleInput.Text);
+                await ViewModel.ConsoleUpdater.UpdateObservers(consoleInput.Text);
                 consoleInput.Text = "";
             }
         }

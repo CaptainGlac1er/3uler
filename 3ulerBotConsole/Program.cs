@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace _3ulerBotConsole
@@ -12,12 +13,13 @@ namespace _3ulerBotConsole
     {
         ServerUpdater<string> consoleUpdater;
         Bot3uler bot;
-        public event EventHandler Ready;
+        static ManualResetEvent mre = new ManualResetEvent(false);
+        public event EventHandler Ready, Shutdown;
 
         static void Main(string[] args)
         {
             new Program();
-            Console.Read();
+            mre.WaitOne();
         }
 
         public Program()
@@ -26,6 +28,7 @@ namespace _3ulerBotConsole
             consoleUpdater.AddObserver(this);
             bot = new Bot3uler(consoleUpdater);
             Ready += StartBot;
+            Shutdown += ShutdownBot;
             Ready(this,EventArgs.Empty);
         }
 
@@ -33,6 +36,11 @@ namespace _3ulerBotConsole
         {
             await bot.StartBot();
         }
+        private void ShutdownBot(object sender, EventArgs e)
+        {
+            Program.mre.Set();
+        }
+
 
         public async Task BotUpdate(string update)
         {
