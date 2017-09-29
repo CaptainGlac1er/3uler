@@ -43,6 +43,11 @@ namespace Bot3ulerLogic.Modules
         {
             await ReplyAsync(await (Service as ImgurService).GetAllSchedules());
         }
+        [Command("stopschedules"), Summary("Stop schedule imgur stream")]
+        public async Task SchedulesStop()
+        {
+            await ReplyAsync(await (Service as ImgurService).StopAllSchedules());
+        }
 
     }
 }

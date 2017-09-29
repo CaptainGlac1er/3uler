@@ -44,5 +44,9 @@ namespace Bot3ulerLogic.Services
         {
             return await ScheduleMaker.GetAllSchedules(CommandName);
         }
+        public async Task<string> StopAllSchedules()
+        {
+            return await ScheduleMaker.StopAllSchedules();
+        }
     }
 }

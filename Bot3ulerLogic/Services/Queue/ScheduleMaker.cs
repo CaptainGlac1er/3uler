@@ -1,6 +1,7 @@
 ﻿using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Bot3ulerLogic.Modules.Queue
             {
                 await Task.Run(() =>
                 {
-                    Timer newTimer = new Timer(schedule.Action, null, 0, schedule.GetDelay());
+                    Timer newTimer = new Timer(schedule.Action, null, 0, schedule.GetMilliSecondDelay());
                     schedule.Connect(newTimer);
                     Schedules.Add(schedule.GetReference(), schedule);
                 });
@@ -51,17 +52,43 @@ namespace Bot3ulerLogic.Modules.Queue
             return await Task.Run<string>(() =>
             {
                 StringBuilder output = new StringBuilder();
-                output.Append($"Running {command} Schedules below\n```");
-                foreach (string key in Schedules.Keys)
+                if (Schedules.Keys.Count == 0)
                 {
-                    if (key.StartsWith(command))
+                    output.AppendLine($"No {command} Schedules running");
+                }
+                else
+                {
+                    output.AppendLine($"Running {command} Schedules below");
+                    foreach (string key in new List<string>(Schedules.Keys))
                     {
-                        output.Append($"{Schedules[key].GetQuery()}\n");
+                        if (key.StartsWith(command))
+                        {
+                            output.AppendLine($"\t**{Schedules[key].GetQuery()}** running every {Schedules[key].GetMinuteDelay()} minutes");
+                        }
                     }
                 }
-                output.Append("```");
                 return output.ToString();
             });
+        }
+        public async Task<string> StopAllSchedules()
+        {
+            StringBuilder output = new StringBuilder();
+            if (Schedules.Keys.Count == 0)
+            {
+                output.AppendLine($"No Schedules running to stop");
+            }
+            else
+            {
+                output.Append($"Stopped Schedules below");
+                foreach (string key in new List<string>(Schedules.Keys))
+                {
+                    Task stopSchedule = Schedules[key]?.Stop();
+                    output.AppendLine($"{Schedules[key].GetQuery()} was running every {Schedules[key].GetMinuteDelay()} minutes");
+                    Schedules.Remove(key);
+                    await stopSchedule;
+                }
+            }
+            return output.ToString();
         }
     }
     public abstract class Schedule
@@ -83,9 +110,13 @@ namespace Bot3ulerLogic.Modules.Queue
         {
             return Reference;
         }
-        public Int32 GetDelay()
+        public Int32 GetMilliSecondDelay()
         {
-            return Delay * 1000 * 30;
+            return Delay * 1000 * 60;
+        }
+        public Int32 GetMinuteDelay()
+        {
+            return Delay;
         }
         public void Connect(Timer timer)
         {
@@ -94,7 +125,7 @@ namespace Bot3ulerLogic.Modules.Queue
         public void SetNewDelay(int mins)
         {
             Delay = mins;
-            ConnectedTimer.Change(Timeout.Infinite, GetDelay());
+            ConnectedTimer.Change(Timeout.Infinite, GetMilliSecondDelay());
         }
         public async Task Stop()
         {
