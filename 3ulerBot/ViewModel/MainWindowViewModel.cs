@@ -1,4 +1,4 @@
-﻿using _3ulerBotServer.Models;
+﻿using _3ulerBotShared.Models;
 using Bot3ulerLogic;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace _3ulerBotServer.ViewModel
     {
         public void AddConsole(IServerObserver<string> console)
         {
+           
             DiscordBot.bot.ListenForConsoleUpdate(console);
         }
         public void AddGuildList(IServerObserver<List<GuildObject>> guilds)

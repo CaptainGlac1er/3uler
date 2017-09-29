@@ -137,7 +137,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\BoolToVisibility.cs" />
-    <Compile Include="Models\DiscordBot.cs" />
     <Compile Include="ViewModel\ConsoleViewModel.cs" />
     <Compile Include="ViewModel\DiscordGuildSidebarViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
@@ -219,5 +218,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <Import Project="..\3ulerShared\3ulerShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

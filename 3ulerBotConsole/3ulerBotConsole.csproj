@@ -55,5 +55,6 @@
       <Name>Bot3ulerLogic</Name>
     </ProjectReference>
   </ItemGroup>
+  <Import Project="..\3ulerShared\3ulerShared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

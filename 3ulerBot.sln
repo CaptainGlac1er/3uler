@@ -9,7 +9,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot3ulerLogic", "Bot3ulerLo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3ulerBotConsole", "3ulerBotConsole\3ulerBotConsole.csproj", "{488B3A63-565C-48B7-AB9A-3960FCBEE337}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "3ulerShared", "3ulerShared\3ulerShared.shproj", "{F4BDA723-D8A9-467A-84D1-8351A9F0436B}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		3ulerShared\3ulerShared.projitems*{488b3a63-565c-48b7-ab9a-3960fcbee337}*SharedItemsImports = 4
+		3ulerShared\3ulerShared.projitems*{aff170e4-1316-44dc-97fe-e90aae6c3bb4}*SharedItemsImports = 4
+		3ulerShared\3ulerShared.projitems*{f4bda723-d8a9-467a-84d1-8351a9f0436b}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU

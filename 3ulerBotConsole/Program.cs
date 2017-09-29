@@ -1,4 +1,5 @@
 ﻿using Bot3ulerLogic;
+using _3ulerBotShared.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,6 @@ namespace _3ulerBotConsole
 {
     class Program: IServerObserver<string>
     {
-        Bot3uler bot;
         static ManualResetEvent mre = new ManualResetEvent(false);
         public event EventHandler Ready, Shutdown;
 
@@ -23,8 +23,7 @@ namespace _3ulerBotConsole
 
         public Program()
         {
-            bot = new Bot3uler();
-            bot.ListenForConsoleUpdate(this);
+            DiscordBot.bot.ListenForConsoleUpdate(this);
             Ready += StartBot;
             Shutdown += ShutdownBot;
             Ready(this,EventArgs.Empty);
@@ -32,7 +31,7 @@ namespace _3ulerBotConsole
 
         private async void StartBot(object sender, EventArgs e)
         {
-            await bot.StartBot();
+            await DiscordBot.bot.StartBot();
         }
         private void ShutdownBot(object sender, EventArgs e)
         {
