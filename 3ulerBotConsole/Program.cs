@@ -11,7 +11,6 @@ namespace _3ulerBotConsole
 {
     class Program: IServerObserver<string>
     {
-        ServerUpdater<string> consoleUpdater;
         Bot3uler bot;
         static ManualResetEvent mre = new ManualResetEvent(false);
         public event EventHandler Ready, Shutdown;
@@ -24,9 +23,8 @@ namespace _3ulerBotConsole
 
         public Program()
         {
-            consoleUpdater = new ServerUpdater<string>();
-            consoleUpdater.AddObserver(this);
-            bot = new Bot3uler(consoleUpdater);
+            bot = new Bot3uler();
+            bot.ListenForConsoleUpdate(this);
             Ready += StartBot;
             Shutdown += ShutdownBot;
             Ready(this,EventArgs.Empty);

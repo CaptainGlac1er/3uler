@@ -9,6 +9,6 @@ namespace _3ulerBotServer.Models
 {
     public class DiscordBot
     {
-        public static Bot3uler bot;
+        public static readonly Bot3uler bot = new Bot3uler();
     }
 }

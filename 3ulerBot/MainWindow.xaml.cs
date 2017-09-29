@@ -33,7 +33,6 @@ namespace _3ulerBotServer
             previousCommands = new LinkedList<string>();
             previousCommands.AddFirst("");
             ViewModel.AddConsole(consoleField.GetViewModel());
-            ViewModel.AddBot();
             ViewModel.AddGuildList(GuildServers.model);
             this.Loaded += MainWindow_Loaded;//.GetAwaiter().OnCompleted(new Action(() => consoleUpdater.UpdateObservers("done")));
         }
@@ -52,7 +51,7 @@ namespace _3ulerBotServer
                 case Key.Enter:
                     if (input != "")
                     {
-                        await ViewModel.ConsoleUpdater.UpdateObservers(string.Format("Console submitted {0}", input));
+                        await consoleField.GetViewModel().BotUpdate(string.Format("Console submitted {0}", input));
                         previousCommands.AddAfter(previousCommands.First, input);
                         head = previousCommands.First;
                         consoleInput.Text = "";
@@ -61,9 +60,9 @@ namespace _3ulerBotServer
                 case Key.Home:
                     try
                     {
-                        await ViewModel.ConsoleUpdater.UpdateObservers("home pressed");
+                        await consoleField.GetViewModel().BotUpdate("home pressed");
                         string update = await ViewModel.GetBot().GetStatus();
-                        await ViewModel.ConsoleUpdater.UpdateObservers(update);
+                        await consoleField.GetViewModel().BotUpdate(update);
                     }
                     catch (Exception er)
                     {
@@ -91,7 +90,7 @@ namespace _3ulerBotServer
         {
             if (consoleInput.Text != "")
             {
-                await ViewModel.ConsoleUpdater.UpdateObservers(consoleInput.Text);
+                await consoleField.GetViewModel().BotUpdate(consoleInput.Text);
                 consoleInput.Text = "";
             }
         }

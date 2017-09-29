@@ -28,33 +28,34 @@ namespace Bot3ulerLogic
 {
     public class Bot3uler
     {
-        DiscordSocketClient client;
-        ServerUpdater<string> console;
+        DiscordSocketClient Client;
+        ServerUpdater<string> Console;
         ServerUpdater<List<GuildObject>> GuildUpdate;
         GuildConfig GuildConfigInfo;
         WebConnection WebConnect;
-        public Bot3uler(ServerUpdater<string> console)
+        public Bot3uler()
         {
-            this.console = console;
             WebConnect = new WebConnection();
-            client = new DiscordSocketClient(new DiscordSocketConfig
+            Console = new ServerUpdater<string>();
+            GuildUpdate = new ServerUpdater<List<GuildObject>>();
+            Client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose
             });
-            client.Log += Log;
+            Client.Log += Log;
             //client.MessageReceived += MessageInbound;
-            client.Ready += Client_Ready;
+            Client.Ready += Client_Ready;
         }
 
 
         private async Task Client_Ready()
         {
-            await client.SetGameAsync("scrubs like you");
-            await console.UpdateObservers("Bot connected");
-            await console.UpdateObservers("can connect to");
+            await Client.SetGameAsync("scrubs like you");
+            await Console.UpdateObservers("Bot connected");
+            await Console.UpdateObservers("can connect to");
             if (GuildUpdate != null)
             {
-                foreach (SocketGuild guild in client.Guilds)
+                foreach (SocketGuild guild in Client.Guilds)
                 {
                     try
                     {
@@ -85,24 +86,24 @@ namespace Bot3ulerLogic
 
             await services.GetRequiredService<CommandHandler>().ConfigureAsyc();
 
-            await client.LoginAsync(TokenType.Bot, discordInfo.Token);
-            await client.StartAsync();
-            await console.UpdateObservers(Thread.CurrentThread.Name);
+            await Client.LoginAsync(TokenType.Bot, discordInfo.Token);
+            await Client.StartAsync();
+            await Console.UpdateObservers(Thread.CurrentThread.Name);
         }
 
         private async Task Log(LogMessage msg)
         {
             Debug.WriteLine(msg.ToString());
-            await console.UpdateObservers(string.Format("{4} {0} {1} {2} {3}", msg.Source, msg.Exception, msg.Severity, msg.Message, Thread.CurrentThread.Name));
+            await Console.UpdateObservers(string.Format("{4} {0} {1} {2} {3}", msg.Source, msg.Exception, msg.Severity, msg.Message, Thread.CurrentThread.Name));
         }
 
         public async Task<string> GetStatus()
         {
             StringBuilder output = new StringBuilder();
-            IReadOnlyCollection<RestConnection> connections = await client.GetConnectionsAsync();
+            IReadOnlyCollection<RestConnection> connections = await Client.GetConnectionsAsync();
             foreach (RestConnection r in connections)
                 output.Append(string.Format("{0} {1} {2}\n", r.Id, r.Name, r.Type));
-            return output.ToString() + client.ConnectionState.ToString();
+            return output.ToString() + Client.ConnectionState.ToString();
         }
         public async Task<GuildConfig> GetSavedDiscordConfig()
         {
@@ -123,15 +124,15 @@ namespace Bot3ulerLogic
 
 
             var sc = new ServiceCollection();
-            sc.AddSingleton(client);
-            sc.AddSingleton(console);
+            sc.AddSingleton(Client);
+            sc.AddSingleton(Console);
             sc.AddSingleton(ImgurConnect);
             sc.AddSingleton(WeatherUndergroundConnect);
             sc.AddSingleton(CleverbotConnect);
             sc.AddSingleton(GuildConfigInfo);
             sc.AddSingleton<CommandHandler>();
             sc.AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, ThrowOnError = true }));
-            sc.AddSingleton(new TestService("testing: ", console));
+            sc.AddSingleton(new TestService("testing: ", Console));
             sc.AddSingleton<WeatherUndergroundService>();
             sc.AddSingleton<ImgurService>();
             sc.AddSingleton<CleverbotService>();
@@ -148,8 +149,11 @@ namespace Bot3ulerLogic
         }
         public void ListenForGuildChange(IServerObserver<List<GuildObject>> guildUpdate)
         {
-            GuildUpdate = new ServerUpdater<List<GuildObject>>();
             GuildUpdate.AddObserver(guildUpdate);
+        }
+        public void ListenForConsoleUpdate(IServerObserver<string> console)
+        {
+            Console.AddObserver(console);
         }
     }
     class DiscordInfo

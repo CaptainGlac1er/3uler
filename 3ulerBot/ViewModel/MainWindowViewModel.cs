@@ -10,18 +10,9 @@ namespace _3ulerBotServer.ViewModel
 {
     class MainWindowViewModel
     {
-        public ServerUpdater<string> ConsoleUpdater;
-        public MainWindowViewModel()
-        {
-            ConsoleUpdater = new ServerUpdater<string>();
-        }
         public void AddConsole(IServerObserver<string> console)
         {
-            ConsoleUpdater.AddObserver(console);
-        }
-        public void AddBot()
-        {
-            DiscordBot.bot = new Bot3uler(ConsoleUpdater);
+            DiscordBot.bot.ListenForConsoleUpdate(console);
         }
         public void AddGuildList(IServerObserver<List<GuildObject>> guilds)
         {
