@@ -20,7 +20,7 @@ namespace Bot3ulerLogic.Modules
         [Command("current"), Summary("Get current weather temp")]
         public async Task CurrentWeatherQuery([Remainder, Summary("query")] string query)
         {
-            await ReplyAsync(await (Service as WeatherUndergroundService).GetCurrentTemp(query));
+            await ReplyAsync("",false,await (Service as WeatherUndergroundService).GetCurrent(query));
         }
         [Command("schedulecurrent"), Summary("current temp schedule")]
         public async Task CurrentWeatherQuery([Summary("delay")] int delay, [Remainder, Summary("query")] string query)
@@ -41,6 +41,11 @@ namespace Bot3ulerLogic.Modules
         public async Task GetSchedules()
         {
             await ReplyAsync(await (Service as WeatherUndergroundService).GetAllSchedules());
+        }
+        [Command("weathermap"), Summary("Get weather map")]
+        public async Task GetWeatherMap([Remainder, Summary("query")] string query)
+        {
+            await ReplyAsync("", false, await (Service as WeatherUndergroundService).GetWeatherMap(query));
         }
         /*[Command("help"), Summary("Get help")]
         public async Task Help()

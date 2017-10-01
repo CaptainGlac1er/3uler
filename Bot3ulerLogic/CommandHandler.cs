@@ -42,7 +42,7 @@ namespace Bot3ulerLogic
             await _updater.UpdateObservers(message.Content);
 
             if (message == null) return;
-            if (message.Content.Length > 0 && !message.Content.StartsWith("!")) return;
+            if (message.Content.Length > 0 && !message.Content.StartsWith(">")) return;
             
             int argPos = 1;
             
