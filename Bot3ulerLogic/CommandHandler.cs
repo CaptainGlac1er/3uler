@@ -41,7 +41,7 @@ namespace Bot3ulerLogic
             var message = pMsg as SocketUserMessage;
             await _updater.UpdateObservers(message.Content);
 
-            if (message == null) return;
+            if (message == null || message.Content.Length == 0) return;
             if (message.Content.Length > 0 && !message.Content.StartsWith(">")) return;
             
             int argPos = 1;
