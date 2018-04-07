@@ -23,15 +23,50 @@ using GWC.Imgur;
 using GWC.WeatherUnderground;
 using GWC.Cleverbot;
 using System.Collections.Specialized;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
+using MySql.Data.Entity;
 
 namespace Bot3ulerLogic
-{
+{ 
+    public class BotDbContext : DbContext
+    {
+        public BotDbContext (): base("name=databaseConnection")
+        {
+            
+        }
+        public DbSet<Guild> Guilds { get; set; }
+        public DbSet<Channel> Channels { get; set; }
+        public DbSet<Command> Commands { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Channel>()
+                .HasMany<Command>(s => s.ChannelCommands)
+                .WithMany(c => c.CommandsChannel)
+                .Map(cs =>
+                {
+                    cs.MapLeftKey("ChannelId");
+                    cs.MapRightKey("CommandId");
+                    cs.ToTable("ChannelCommands");
+                });
+            /*modelBuilder.Entity<Guild>()
+                .HasMany<Channel>(g => g.GuildChannels)
+                .WithRequired(c => c.ChannelGuild)
+                .Map(cs =>
+                {
+                    cs.MapKey("GuildId");
+                    cs.ToTable("GuildChannels");
+                });*/
+        }
+    }
+
     public class Bot3uler
     {
+
         DiscordSocketClient Client;
         ServerUpdater<string> Console;
         ServerUpdater<List<GuildObject>> GuildUpdate;
-        GuildConfig GuildConfigInfo;
         WebConnection WebConnect;
         public Bot3uler()
         {
@@ -45,6 +80,10 @@ namespace Bot3ulerLogic
             Client.Log += Log;
             //client.MessageReceived += MessageInbound;
             Client.Ready += Client_Ready;
+            var test = new
+            {
+                test = "",
+            };
         }
 
 
@@ -74,6 +113,7 @@ namespace Bot3ulerLogic
                     }
                 }
             }
+            var data = await (new FileData("Config/GuildConfig.json")).GetObjectFromJson<BotConfig>();
             // console.UpdateObservers($"{guild.Name} channel count {guild.Channels.Count} id {guild.Id}");
 
         }
@@ -81,7 +121,6 @@ namespace Bot3ulerLogic
         public async Task StartBot()
         {
             DiscordInfo discordInfo = await (new FileData("Config/DiscordConfig.json")).GetObjectFromJson<DiscordInfo>();
-            GuildConfigInfo = await GetSavedDiscordConfig();
             var services = await ConfigureServices();
 
             await services.GetRequiredService<CommandHandler>().ConfigureAsyc();
@@ -105,11 +144,6 @@ namespace Bot3ulerLogic
                 output.Append(string.Format("{0} {1} {2}\n", r.Id, r.Name, r.Type));
             return output.ToString() + Client.ConnectionState.ToString();
         }
-        public async Task<GuildConfig> GetSavedDiscordConfig()
-        {
-            GuildConfig config = await (new FileData("Config/GuildConfig.json")).GetObjectFromJson<GuildConfig>();
-            return config;
-        }
         public async Task<IServiceProvider> ConfigureServices()
         {
             Imgur ImgurConnect = new Imgur(WebConnect);
@@ -129,7 +163,6 @@ namespace Bot3ulerLogic
             sc.AddSingleton(ImgurConnect);
             sc.AddSingleton(WeatherUndergroundConnect);
             sc.AddSingleton(CleverbotConnect);
-            sc.AddSingleton(GuildConfigInfo);
             sc.AddSingleton<CommandHandler>();
             sc.AddSingleton(new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, ThrowOnError = true }));
             sc.AddSingleton(new TestService("testing: ", Console));

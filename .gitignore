@@ -269,3 +269,5 @@ __pycache__/
 /Bot3ulerLogic/Config/GuildConfig.json
 /Bot3ulerLogic/Config/DiscordConfig.json
 /Bot3ulerLogic/Config/CleverbotConfig.json
+/3ulerBot/Config/ConnectionStrings.config
+/Bot3ulerLogic/Properties

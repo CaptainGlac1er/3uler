@@ -2,6 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -25,14 +28,44 @@ namespace Bot3ulerLogic.Config.Objects
             RaisePropertyChanged(propertyName);
         }
     }
+
+    public class Command : UpdateableClasses
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public long CommandId { get; set; }
+        public string CommandString { get; set; }
+        public virtual ICollection<Channel> CommandsChannel { get; set; }
+    }
+
+    /*public class ChannelCommand
+    {
+        public int Id { get; set; }
+
+        public long CommandId { get; set; }
+        public virtual Command Command { get; set; }
+
+        public long ChannelId { get; set; }
+        public virtual Channel Channel { get; set; }
+    }*/
+
     public class Channel : UpdateableClasses
     {
+        [Key]
+        public long ChannelId { get; set; }
+        //public virtual ICollection<ChannelCommand> Commands { get; set; }
+        //public ICollection<ChannelCommand> ChannelCommands { get; set; }
+        public virtual ICollection<Command> ChannelCommands { get; set; }
+        public virtual Guild ChannelGuild { get; set; }
+        [NotMapped]
         private bool _ShowCommands = false;
+        [NotMapped]
         private List<string> _Commands = new List<string>();
         public Channel()
         {
             Commands = new List<string>();
         }
+        [NotMapped]
         public List<string> Commands
         {
             get
@@ -46,6 +79,7 @@ namespace Bot3ulerLogic.Config.Objects
         }
 
         [JsonIgnore]
+        [NotMapped]
         public bool ShowCommands
         {
             get
@@ -66,6 +100,11 @@ namespace Bot3ulerLogic.Config.Objects
         {
             Channels = new Dictionary<ulong, Channel>();
         }
+        [Key]
+        public long GuildId { get; set; }
+        public string GuildName { get; set; }
+        public virtual ICollection<Channel> GuildChannels { get; set; }
+        [NotMapped]
         public Dictionary<ulong, Channel> Channels { get; set; }
     }
 
