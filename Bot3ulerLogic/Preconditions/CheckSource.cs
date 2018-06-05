@@ -22,7 +22,16 @@ namespace Bot3ulerLogic.Preconditions
             using (var db = new BotDbContext())
             {
                 var check1 = from c in db.Channels where c.ChannelId == (long) context.Channel.Id select c;
-                return (check1.First().ChannelCommands.Where((check2 => check2.CommandString == Command)).Any()) ? Task.FromResult(PreconditionResult.FromSuccess()) : Task.FromResult(PreconditionResult.FromError("Can't use command here"));
+                if (check1.Count() == 1)
+                {
+                    return (check1.First().ChannelCommands.Where((check2 => check2.CommandString == Command)).Any())
+                        ? Task.FromResult(PreconditionResult.FromSuccess())
+                        : Task.FromResult(PreconditionResult.FromError($"Can't use {Command} command in: {context.Guild.Name} > {context.Channel.Name}"));
+                }
+                else
+                {
+                    return Task.FromResult(PreconditionResult.FromError($"Can't use commands in: {context.Guild.Name} > {context.Channel.Name}"));
+                }
             }
         }
     }

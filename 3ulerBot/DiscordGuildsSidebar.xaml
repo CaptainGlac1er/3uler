@@ -15,24 +15,29 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ListBox ItemsSource="{Binding Guilds}" Grid.Row="2">
+        <ListBox ItemsSource="{Binding Guilds}" 
+                 Grid.Row="0" 
+                 ScrollViewer.CanContentScroll="False"
+                 HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <ToggleButton Content="{Binding Name}" IsChecked="{Binding ShowChannels, Mode=TwoWay}"/>
                         <StackPanel  Visibility="{Binding ShowChannels, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
-                            <ListBox ItemsSource="{Binding Channels}">
-                                <ListBox.ItemTemplate>
+                            <ItemsControl ItemsSource="{Binding Channels}">
+                                <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Tag="{Binding}">
-                                            <ToggleButton Content="{Binding Name, Mode=TwoWay}" IsChecked="{Binding ShowCommands, Mode=TwoWay}" />
+                                        <StackPanel Tag="{Binding}" >
+                                            <ToggleButton  IsChecked="{Binding ShowCommands, Mode=TwoWay}" >
+                                                <TextBlock Text="{Binding Name, Mode=TwoWay}"></TextBlock>
+                                            </ToggleButton>
                                             <StackPanel Visibility="{Binding ShowCommands, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
                                                 <Button Content="Add" Click="BtnAddChannel" />
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>

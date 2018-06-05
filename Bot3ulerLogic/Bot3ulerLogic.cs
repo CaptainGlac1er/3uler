@@ -25,15 +25,17 @@ using GWC.Cleverbot;
 using System.Collections.Specialized;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
+using Bot3ulerLogic.Migrations;
 using MySql.Data.Entity;
 
 namespace Bot3ulerLogic
 { 
     public class BotDbContext : DbContext
     {
-        public BotDbContext (): base("name=databaseConnection")
+        public BotDbContext (): base("name=testdatabaseConnection")
         {
-            
+            Console.WriteLine("here");
         }
         public DbSet<Guild> Guilds { get; set; }
         public DbSet<Channel> Channels { get; set; }
@@ -84,6 +86,9 @@ namespace Bot3ulerLogic
             {
                 test = "",
             };
+            var config = new Configuration();
+            var migrator = new DbMigrator(config);
+            migrator.Update();
         }
 
 
@@ -103,6 +108,7 @@ namespace Bot3ulerLogic
                         GuildObject guildObject = new GuildObject(guild.Name, guild.Id);
                         foreach (SocketTextChannel channel in guild.TextChannels)
                         {
+                            await Console.UpdateObservers($"Added {guildObject.Name} > {channel.Name}");
                             guildObject.Channels.Add(new ChannelObject(channel.Name, channel.Id));
                         }
                         current.Add(guildObject);
@@ -113,7 +119,7 @@ namespace Bot3ulerLogic
                     }
                 }
             }
-            var data = await (new FileData("Config/GuildConfig.json")).GetObjectFromJson<BotConfig>();
+            //var data = await (new FileData("Config/GuildConfig.json")).GetObjectFromJson<BotConfig>();
             // console.UpdateObservers($"{guild.Name} channel count {guild.Channels.Count} id {guild.Id}");
 
         }
@@ -292,21 +298,21 @@ namespace Bot3ulerLogic
             Name = name;
             Id = id;
         }
-        private bool _ShowCommands = false;
-        private string _Name;
-        private ulong _Id;
+        private bool _showCommands = false;
+        private string _name;
+        private ulong _id;
 
         public string Name
         {
             get
             {
-                return _Name;
+                return _name;
             }
             set
             {
-                if (value != _Name)
+                if (value != _name)
                 {
-                    _Name = value;
+                    _name = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -316,13 +322,13 @@ namespace Bot3ulerLogic
         {
             get
             {
-                return _Id;
+                return _id;
             }
             set
             {
-                if (value != _Id)
+                if (value != _id)
                 {
-                    this._Id = value;
+                    this._id = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -333,13 +339,13 @@ namespace Bot3ulerLogic
         {
             get
             {
-                return _ShowCommands;
+                return _showCommands;
             }
             set
             {
-                if (value != _ShowCommands)
+                if (value != _showCommands)
                 {
-                    _ShowCommands = value;
+                    _showCommands = value;
                     NotifyPropertyChanged();
                 }
             }

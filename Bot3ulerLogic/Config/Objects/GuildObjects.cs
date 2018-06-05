@@ -68,14 +68,8 @@ namespace Bot3ulerLogic.Config.Objects
         [NotMapped]
         public List<string> Commands
         {
-            get
-            {
-                return _Commands;
-            }
-            set
-            {
-                Set(ref _Commands, value);
-            }
+            get => _Commands;
+            set => Set(ref _Commands, value);
         }
 
         [JsonIgnore]
