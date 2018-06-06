@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bot3ulerLogic.Config.Objects;
 
 namespace _3ulerBotServer.ViewModel
 {
@@ -15,7 +16,7 @@ namespace _3ulerBotServer.ViewModel
            
             DiscordBot.bot.ListenForConsoleUpdate(console);
         }
-        public void AddGuildList(IServerObserver<List<GuildObject>> guilds)
+        public void AddGuildList(IServerObserver<List<Guild>> guilds)
         {
             DiscordBot.bot.ListenForGuildChange(guilds);
         }

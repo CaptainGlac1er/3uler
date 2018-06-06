@@ -52,6 +52,7 @@ namespace Bot3ulerLogic.Config.Objects
     public class Channel : UpdateableClasses
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long ChannelId { get; set; }
         //public virtual ICollection<ChannelCommand> Commands { get; set; }
         //public ICollection<ChannelCommand> ChannelCommands { get; set; }
@@ -61,9 +62,18 @@ namespace Bot3ulerLogic.Config.Objects
         private bool _ShowCommands = false;
         [NotMapped]
         private List<string> _Commands = new List<string>();
+
+        [NotMapped] private string _Name;
+        [NotMapped]
+        public string Name
+        {
+            get => _Name;
+            set => Set(ref _Name, value);
+        }
         public Channel()
         {
             Commands = new List<string>();
+            ChannelCommands = new List<Command>();
         }
         [NotMapped]
         public List<string> Commands
@@ -88,18 +98,35 @@ namespace Bot3ulerLogic.Config.Objects
         }
     }
 
-    public class Guild
+    public class Guild : UpdateableClasses
     {
         public Guild()
         {
             Channels = new Dictionary<ulong, Channel>();
         }
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long GuildId { get; set; }
         public string GuildName { get; set; }
         public virtual ICollection<Channel> GuildChannels { get; set; }
         [NotMapped]
         public Dictionary<ulong, Channel> Channels { get; set; }
+        
+        [NotMapped]
+        private bool _ShowChannels = false;
+        [NotMapped]
+        public bool ShowChannels
+        {
+            get
+            {
+                return _ShowChannels;
+            }
+            set
+            {
+                Debug.WriteLine($"{value} new value");
+                Set(ref _ShowChannels, value);
+            }
+        }
     }
 
     public class GuildConfig

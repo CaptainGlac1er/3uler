@@ -68,13 +68,13 @@ namespace Bot3ulerLogic
 
         DiscordSocketClient Client;
         ServerUpdater<string> Console;
-        ServerUpdater<List<GuildObject>> GuildUpdate;
+        ServerUpdater<List<Guild>> GuildUpdate;
         WebConnection WebConnect;
         public Bot3uler()
         {
             WebConnect = new WebConnection();
             Console = new ServerUpdater<string>();
-            GuildUpdate = new ServerUpdater<List<GuildObject>>();
+            GuildUpdate = new ServerUpdater<List<Guild>>();
             Client = new DiscordSocketClient(new DiscordSocketConfig
             {
                 LogLevel = LogSeverity.Verbose
@@ -86,9 +86,6 @@ namespace Bot3ulerLogic
             {
                 test = "",
             };
-            var config = new Configuration();
-            var migrator = new DbMigrator(config);
-            migrator.Update();
         }
 
 
@@ -97,32 +94,63 @@ namespace Bot3ulerLogic
             await Client.SetGameAsync("scrubs like you");
             await Console.UpdateObservers("Bot connected");
             await Console.UpdateObservers("can connect to");
-            if (GuildUpdate != null)
+            using (var db = new BotDbContext())
             {
-                foreach (SocketGuild guild in Client.Guilds)
+                if (GuildUpdate != null)
                 {
-                    try
+                    foreach (var guild in Client.Guilds)
                     {
-                        List<GuildObject> current = GuildUpdate.GetCurrentData();
-                        current = current ?? new List<GuildObject>();
-                        GuildObject guildObject = new GuildObject(guild.Name, guild.Id);
-                        foreach (SocketTextChannel channel in guild.TextChannels)
+                        try
                         {
-                            await Console.UpdateObservers($"Added {guildObject.Name} > {channel.Name}");
-                            guildObject.Channels.Add(new ChannelObject(channel.Name, channel.Id));
+                            var test = db.Guilds.ToList();
+                            var dbguild = db.Guilds.SingleOrDefault(g => g.GuildId == (long) guild.Id);
+                            if (dbguild == null)
+                            {
+                                dbguild = new Guild()
+                                {
+                                    GuildId = (long) guild.Id,
+                                    GuildName = guild.Name
+                                };
+                                dbguild = db.Guilds.Add(dbguild);
+                                await Console.UpdateObservers($"Added guild: {dbguild.GuildName} to db");
+                            }
+                            else
+                            {
+                                dbguild.GuildName = guild.Name;
+                            };
+                            foreach (SocketTextChannel channel in guild.TextChannels)
+                            {
+                                var dbchannel = dbguild.GuildChannels.SingleOrDefault(c => c.ChannelId == (long) channel.Id);
+                                if (dbchannel == null)
+                                {
+                                    dbchannel = new Channel
+                                    {
+                                        ChannelId = (long) channel.Id,
+                                        Name = channel.Name
+                                    };
+                                    dbguild.GuildChannels.Add(dbchannel);
+                                    await Console.UpdateObservers($"Added channel: {dbchannel.Name} to db");
+                                }
+                                else
+                                {
+                                    dbchannel.Name = channel.Name;
+                                }
+                                await Console.UpdateObservers($"Added {dbguild.GuildName} > {dbchannel.Name} has {dbchannel.ChannelCommands.Count} commands");
+                            }
+                            await db.SaveChangesAsync();
+                            await GuildUpdate.UpdateObservers(db.Guilds.ToList());
                         }
-                        current.Add(guildObject);
-                        await GuildUpdate.UpdateObservers(current);
-                    }catch(Exception e)
-                    {
-                        Debug.WriteLine(e);
+                        catch (Exception e)
+                        {
+                            Debug.WriteLine(e);
+                        }
                     }
                 }
             }
             //var data = await (new FileData("Config/GuildConfig.json")).GetObjectFromJson<BotConfig>();
-            // console.UpdateObservers($"{guild.Name} channel count {guild.Channels.Count} id {guild.Id}");
+                // console.UpdateObservers($"{guild.Name} channel count {guild.Channels.Count} id {guild.Id}");
 
-        }
+            }
 
         public async Task StartBot()
         {
@@ -186,7 +214,7 @@ namespace Bot3ulerLogic
             sp.GetService<WeatherUndergroundService>();
             return sp;
         }
-        public void ListenForGuildChange(IServerObserver<List<GuildObject>> guildUpdate)
+        public void ListenForGuildChange(IServerObserver<List<Guild>> guildUpdate)
         {
             GuildUpdate.AddObserver(guildUpdate);
         }
@@ -207,154 +235,5 @@ namespace Bot3ulerLogic
         public string Secret { get; set; }
 
     }
-    public class GuildObject : INotifyPropertyChanged
-    {
-        public GuildObject(string name, ulong id)
-        {
-            Name = name;
-            Id = id;
-            channels = new List<ChannelObject>();
-        }
-        private bool _ShowChannels = false;
-        public string name;
-        public ulong id;
-        public List<ChannelObject> channels;
-
-        public string Name
-        {
-            get
-            {
-                return this.name;
-            }
-            set
-            {
-                if (value != this.name)
-                {
-                    this.name = value;
-                    NotifyPropertyChanged();
-                }
-            }
-
-        }
-        public ulong Id
-        {
-            get
-            {
-                return this.id;
-            }
-            set
-            {
-                if (value != this.id)
-                {
-                    this.id = value;
-                    NotifyPropertyChanged();
-                }
-            }
-
-        }
-        [JsonIgnore]
-        public bool ShowChannels
-        {
-            get
-            {
-                return _ShowChannels;
-            }
-            set
-            {
-                if (value != _ShowChannels)
-                {
-                    _ShowChannels = value;
-                }
-                NotifyPropertyChanged();
-            }
-        }
-        public List<ChannelObject> Channels
-        {
-            get
-            {
-                return this.channels;
-            }
-            set
-            {
-                if (value != this.channels)
-                {
-                    this.channels = value;
-                    NotifyPropertyChanged();
-                }
-            }
-
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
-    public class ChannelObject : INotifyPropertyChanged
-    {
-        public ChannelObject(string name, ulong id)
-        {
-            Name = name;
-            Id = id;
-        }
-        private bool _showCommands = false;
-        private string _name;
-        private ulong _id;
-
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                if (value != _name)
-                {
-                    _name = value;
-                    NotifyPropertyChanged();
-                }
-            }
-
-        }
-        public ulong Id
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                if (value != _id)
-                {
-                    this._id = value;
-                    NotifyPropertyChanged();
-                }
-            }
-
-        }
-        [JsonIgnore]
-        public bool ShowCommands
-        {
-            get
-            {
-                return _showCommands;
-            }
-            set
-            {
-                if (value != _showCommands)
-                {
-                    _showCommands = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+    
 }

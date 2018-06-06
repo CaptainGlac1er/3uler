@@ -1,3 +1,5 @@
+using MySql.Data.Entity;
+
 namespace Bot3ulerLogic.Migrations
 {
     using System;
@@ -10,6 +12,9 @@ namespace Bot3ulerLogic.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
+            SetSqlGenerator("MySql.Data.MySqlClient", new MySqlMigrationSqlGenerator());
+            SetHistoryContextFactory("MySql.Data.MySqlClient", (conn, schema) => new MySqlHistoryContext(conn, schema));
+            CodeGenerator = new MySqlMigrationCodeGenerator();
         }
 
         protected override void Seed(Bot3ulerLogic.BotDbContext context)

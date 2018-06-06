@@ -168,9 +168,9 @@
     <Compile Include="Bot3ulerLogic.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Config\Objects\GuildObjects.cs" />
-    <Compile Include="Migrations\201804070105424_Init.cs" />
-    <Compile Include="Migrations\201804070105424_Init.Designer.cs">
-      <DependentUpon>201804070105424_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201806060359068_Init.cs" />
+    <Compile Include="Migrations\201806060359068_Init.Designer.cs">
+      <DependentUpon>201806060359068_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Modules\CleverbotModule.cs" />
@@ -220,8 +220,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201804070105424_Init.resx">
-      <DependentUpon>201804070105424_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806060359068_Init.resx">
+      <DependentUpon>201806060359068_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

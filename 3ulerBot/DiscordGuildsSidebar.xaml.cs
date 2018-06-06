@@ -34,9 +34,14 @@ namespace _3ulerBotServer
             this.DataContext = model;
         }
 
-        private void BtnAddChannel(object sender, RoutedEventArgs e)
+        private void BtnModifyChannel(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine(((ChannelObject)(sender as Button).DataContext).Name);
+            var button = sender as Button;
+            if (button != null)
+            {
+                var modifyChannel = new ModifyChannel((Channel) button.DataContext);
+                modifyChannel.ShowDialog();
+            }
         }
     }
 }

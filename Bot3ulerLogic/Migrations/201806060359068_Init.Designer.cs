@@ -13,7 +13,7 @@ namespace Bot3ulerLogic.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201804070105424_Init"; }
+            get { return "201806060359068_Init"; }
         }
         
         string IMigrationMetadata.Source

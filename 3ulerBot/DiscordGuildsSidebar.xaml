@@ -22,9 +22,9 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <ToggleButton Content="{Binding Name}" IsChecked="{Binding ShowChannels, Mode=TwoWay}"/>
+                        <ToggleButton Content="{Binding GuildName}" IsChecked="{Binding ShowChannels, Mode=TwoWay}"/>
                         <StackPanel  Visibility="{Binding ShowChannels, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
-                            <ItemsControl ItemsSource="{Binding Channels}">
+                            <ItemsControl ItemsSource="{Binding GuildChannels}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Tag="{Binding}" >
@@ -32,7 +32,7 @@
                                                 <TextBlock Text="{Binding Name, Mode=TwoWay}"></TextBlock>
                                             </ToggleButton>
                                             <StackPanel Visibility="{Binding ShowCommands, Mode=OneWay, Converter={StaticResource BoolToVisibility}}">
-                                                <Button Content="Add" Click="BtnAddChannel" />
+                                                <Button Content="Modify" Click="BtnModifyChannel" />
                                             </StackPanel>
                                         </StackPanel>
                                     </DataTemplate>

@@ -7,18 +7,19 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Bot3ulerLogic.Config.Objects;
 
 namespace _3ulerBotServer.ViewModel
 {
-    public class DiscordGuildSidebarViewModel : INotifyPropertyChanged, IServerObserver<List<GuildObject>>
+    public class DiscordGuildSidebarViewModel : INotifyPropertyChanged, IServerObserver<List<Guild>>
     {
         public string test = "test";
         public DiscordGuildSidebarViewModel()
         {
-            Guilds = new List<GuildObject>();
+            Guilds = new List<Guild>();
         }
-        public List<GuildObject> guilds;
-        public List<GuildObject> Guilds
+        public List<Guild> guilds;
+        public List<Guild> Guilds
         {
             get
             {
@@ -42,7 +43,7 @@ namespace _3ulerBotServer.ViewModel
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        public async Task BotUpdate(List<GuildObject> update)
+        public async Task BotUpdate(List<Guild> update)
         {
             await Task.Run(() =>
             {
