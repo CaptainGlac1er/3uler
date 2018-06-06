@@ -11,6 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3ulerBotConsole", "3ulerBot
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "3ulerShared", "3ulerShared\3ulerShared.shproj", "{F4BDA723-D8A9-467A-84D1-8351A9F0436B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{45CB9C25-B034-438B-8DCC-A4CA2B35685D}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		3ulerShared\3ulerShared.projitems*{488b3a63-565c-48b7-ab9a-3960fcbee337}*SharedItemsImports = 4
@@ -37,5 +42,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2C060113-98EF-49A0-8C3F-99410F23BD31}
 	EndGlobalSection
 EndGlobal

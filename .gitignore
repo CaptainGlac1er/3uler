@@ -271,5 +271,3 @@ __pycache__/
 /Bot3ulerLogic/Config/CleverbotConfig.json
 /3ulerBot/Config/ConnectionStrings.config
 /Bot3ulerLogic/Properties
-/Bot3ulerLogic/Migrations/*
-!/Bot3ulerLogic/Migrations/Configuration.cs
