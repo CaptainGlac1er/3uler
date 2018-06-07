@@ -1,21 +1,9 @@
-﻿using System;
+﻿using _3ulerBotServer.ViewModel;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Bot3ulerLogic;
 using System.Diagnostics;
-using _3ulerBotServer.ViewModel;
+using System.Windows;
+using System.Windows.Input;
 
 namespace _3ulerBotServer
 {
@@ -30,12 +18,14 @@ namespace _3ulerBotServer
         public MainWindow()
         {
             InitializeComponent();
+            System.Console.WriteLine("sup nerd");
             ViewModel = new MainWindowViewModel();
             previousCommands = new LinkedList<string>();
             previousCommands.AddFirst("");
             ViewModel.AddConsole(consoleField.GetViewModel());
             ViewModel.AddGuildList(GuildServers.model);
             this.Loaded += MainWindow_Loaded;//.GetAwaiter().OnCompleted(new Action(() => consoleUpdater.UpdateObservers("done")));
+            System.Console.WriteLine("finished");
         }
 
         private async void MainWindow_Loaded(object sender, RoutedEventArgs e)

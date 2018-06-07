@@ -7,13 +7,14 @@
         mc:Ignorable="d"
         Title="ModifyChannel" Height="450" Width="800">
     <StackPanel>
-        <TextBlock Text="{Binding ChannelBeingModified.Name}"></TextBlock>
-        <TextBlock Text="{Binding ChannelBeingModified.ChannelId}"></TextBlock>
-        <ListBox ItemsSource="{Binding ChannelBeingModified.ChannelCommands}">
+        <TextBlock Text="{Binding ChannelBeingModified.Name, Mode=OneWay}"></TextBlock>
+        <TextBlock Text="{Binding ChannelBeingModified.ChannelId, Mode=OneWay}"></TextBlock>
+        <ListBox ItemsSource="{Binding ChannelBeingModified.GetChannelCommands, Mode=OneWay}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <TextBlock Text="{Binding CommandString}"></TextBlock>
+                        <Button DataContext="{Binding}" Content="Remove" Click="btnRemoveCommand"></Button>
                     </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

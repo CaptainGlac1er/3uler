@@ -9,11 +9,10 @@ using Bot3ulerLogic.Config.Objects;
 
 namespace _3ulerBotServer.ViewModel
 {
-    class MainWindowViewModel
+    public class MainWindowViewModel
     {
         public void AddConsole(IServerObserver<string> console)
         {
-           
             DiscordBot.bot.ListenForConsoleUpdate(console);
         }
         public void AddGuildList(IServerObserver<List<Guild>> guilds)

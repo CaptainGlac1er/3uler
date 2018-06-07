@@ -56,7 +56,23 @@ namespace Bot3ulerLogic.Config.Objects
         public long ChannelId { get; set; }
         //public virtual ICollection<ChannelCommand> Commands { get; set; }
         //public ICollection<ChannelCommand> ChannelCommands { get; set; }
-        public virtual ICollection<Command> ChannelCommands { get; set; }
+        public virtual ICollection<Command> ChannelCommands
+        {
+            get;
+            set;
+        }
+
+        [NotMapped]
+        public ICollection<Command> GetChannelCommands
+        {
+            get
+            {
+                using (var db = new BotDbContext())
+                {
+                    return db.Channels.Find(ChannelId).ChannelCommands;
+                }
+            }
+        }
         public virtual Guild ChannelGuild { get; set; }
         [NotMapped]
         private bool _ShowCommands = false;
@@ -73,7 +89,6 @@ namespace Bot3ulerLogic.Config.Objects
         public Channel()
         {
             Commands = new List<string>();
-            ChannelCommands = new List<Command>();
         }
         [NotMapped]
         public List<string> Commands
@@ -94,6 +109,37 @@ namespace Bot3ulerLogic.Config.Objects
             {
                 Debug.WriteLine($"{value} new value");
                 Set(ref _ShowCommands, value);
+            }
+        }
+
+        public async void RemoveCommand(long commandId)
+        {
+            using (var db = new BotDbContext())
+            {
+                db.Channels.Find(ChannelId)?.ChannelCommands.Remove(db.Commands.Find(commandId));
+                await db.SaveChangesAsync();
+                RaisePropertyChanged("GetChannelCommands");
+            }
+        }
+        public async void AddCommand(long commandId)
+        {
+            using (var db = new BotDbContext())
+            {
+                var channel = await db.Channels.FindAsync(ChannelId);
+                channel?.ChannelCommands.Add(db.Commands.Find(commandId));
+                await db.SaveChangesAsync();
+                RaisePropertyChanged("GetChannelCommands");
+            }
+        }
+
+        public async Task<List<Command>> AvailableCommands()
+        {
+            using (var db = new BotDbContext())
+            {
+                var channel = await db.Channels.FindAsync(ChannelId);
+                var leftover = db.Commands.ToList();
+                leftover.RemoveAll(x => channel != null && channel.ChannelCommands.Contains(x));
+                return leftover.ToList();
             }
         }
     }

@@ -82,10 +82,6 @@ namespace Bot3ulerLogic
             Client.Log += Log;
             //client.MessageReceived += MessageInbound;
             Client.Ready += Client_Ready;
-            var test = new
-            {
-                test = "",
-            };
         }
 
 
@@ -102,7 +98,6 @@ namespace Bot3ulerLogic
                     {
                         try
                         {
-                            var test = db.Guilds.ToList();
                             var dbguild = db.Guilds.SingleOrDefault(g => g.GuildId == (long) guild.Id);
                             if (dbguild == null)
                             {

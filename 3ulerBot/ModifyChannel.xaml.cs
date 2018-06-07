@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Bot3ulerLogic;
 using Bot3ulerLogic.Config.Objects;
 using _3ulerBotServer.ViewModel;
+using _3ulerBotShared.Models;
 
 namespace _3ulerBotServer
 {
@@ -36,6 +37,15 @@ namespace _3ulerBotServer
         private void CloseChannelDialog_OnClick(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private async void btnRemoveCommand(object sender, RoutedEventArgs e)
+        {
+            var commandBeingRemoved = ((sender as Button).DataContext as Command);
+            if (commandBeingRemoved != null)
+            {
+                model.ChannelBeingModified.RemoveCommand(commandBeingRemoved.CommandId);
+            }
         }
     }
 }
