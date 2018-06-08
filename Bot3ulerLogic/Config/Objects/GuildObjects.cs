@@ -69,7 +69,8 @@ namespace Bot3ulerLogic.Config.Objects
             {
                 using (var db = new BotDbContext())
                 {
-                    return db.Channels.Find(ChannelId).ChannelCommands;
+                    var commands = db.Channels.Find(ChannelId).ChannelCommands;
+                    return commands ?? new List<Command>();
                 }
             }
         }
@@ -119,6 +120,7 @@ namespace Bot3ulerLogic.Config.Objects
                 db.Channels.Find(ChannelId)?.ChannelCommands.Remove(db.Commands.Find(commandId));
                 await db.SaveChangesAsync();
                 RaisePropertyChanged("GetChannelCommands");
+                RaisePropertyChanged("AvailableCommands");
             }
         }
         public async void AddCommand(long commandId)
@@ -129,17 +131,22 @@ namespace Bot3ulerLogic.Config.Objects
                 channel?.ChannelCommands.Add(db.Commands.Find(commandId));
                 await db.SaveChangesAsync();
                 RaisePropertyChanged("GetChannelCommands");
+                RaisePropertyChanged("AvailableCommands");
             }
         }
-
-        public async Task<List<Command>> AvailableCommands()
+        [NotMapped]
+        public List<Command> AvailableCommands
         {
-            using (var db = new BotDbContext())
+            get
             {
-                var channel = await db.Channels.FindAsync(ChannelId);
-                var leftover = db.Commands.ToList();
-                leftover.RemoveAll(x => channel != null && channel.ChannelCommands.Contains(x));
-                return leftover.ToList();
+                using (var db = new BotDbContext())
+                {
+                    var commands = db.Channels.Find(ChannelId)?.GetChannelCommands.ToList();
+                    var leftover = db.Commands.ToList();
+                    leftover.RemoveAll(
+                        x => commands != null && commands.Exists(y => y.CommandString == x.CommandString));
+                    return leftover.ToList();
+                }
             }
         }
     }

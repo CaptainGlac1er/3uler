@@ -5,20 +5,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_3ulerBotServer.ViewModel"
         mc:Ignorable="d"
-        Title="ModifyChannel" Height="450" Width="800">
-    <StackPanel>
-        <TextBlock Text="{Binding ChannelBeingModified.Name, Mode=OneWay}"></TextBlock>
-        <TextBlock Text="{Binding ChannelBeingModified.ChannelId, Mode=OneWay}"></TextBlock>
-        <ListBox ItemsSource="{Binding ChannelBeingModified.GetChannelCommands, Mode=OneWay}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="{Binding CommandString}"></TextBlock>
-                        <Button DataContext="{Binding}" Content="Remove" Click="btnRemoveCommand"></Button>
-                    </StackPanel>
+        Title="ModifyChannel" Height="450" Width="400">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom">
+            <Button Content="Close" Name="CloseChannelDialog" Click="CloseChannelDialog_OnClick"/>
+        </StackPanel>
+        <StackPanel>
+            <Label Content="Channel Name:"/>
+            <TextBlock Text="{Binding ChannelBeingModified.Name, Mode=OneWay}"></TextBlock>
+            <Label Content="Channel ID:"/>
+            <TextBlock Text="{Binding ChannelBeingModified.ChannelId, Mode=OneWay}"></TextBlock>
+            <Label Content="Command available"/>
+            <ListBox ItemsSource="{Binding ChannelBeingModified.GetChannelCommands, Mode=OneWay}" MinHeight="50px">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="{Binding CommandString}"></TextBlock>
+                            <Button DataContext="{Binding}" Content="Remove" Click="btnRemoveCommand"></Button>
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-        </ListBox>
-        <Button Content="Close" Name="CloseChannelDialog" Click="CloseChannelDialog_OnClick"></Button>
-    </StackPanel>
+            </ListBox>
+            <Label Content="Command to add:"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                    <ComboBox x:Name="comboBox" ItemsSource="{Binding ChannelBeingModified.AvailableCommands, Mode=OneWay}" DisplayMemberPath="CommandString" Grid.Column="0"/>
+                    <Button Name="btnAddCommand" DataContext="{Binding SelectedItem, ElementName=comboBox, Mode=OneWay}" Click="BtnAddCommand_OnClick" Content="Add Command" Grid.Column="1" Padding="5"/>
+            </Grid>
+        </StackPanel>
+    </DockPanel>
 </Window>

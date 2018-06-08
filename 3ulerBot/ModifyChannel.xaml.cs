@@ -47,5 +47,14 @@ namespace _3ulerBotServer
                 model.ChannelBeingModified.RemoveCommand(commandBeingRemoved.CommandId);
             }
         }
+
+        private void BtnAddCommand_OnClick(object sender, RoutedEventArgs e)
+        {
+            var commandBeingAdded = (sender as Button)?.DataContext as Command;
+            if (commandBeingAdded != null)
+            {
+                model.ChannelBeingModified.AddCommand(commandBeingAdded.CommandId);
+            }
+        }
     }
 }
